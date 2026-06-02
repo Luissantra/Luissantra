@@ -97,7 +97,13 @@ async function initHomePage() {
 
     // Get the favourites gallery to use its cover image
     const favGallery = galleries.find(g => g.id === 'favourites');
-    const favCover = favGallery && favGallery.coverImage ? favGallery.coverImage : (photography[0]?.coverImage || '');
+    let favCover = favGallery && favGallery.coverImage ? favGallery.coverImage : (photography[0]?.coverImage || '');
+    let favImages = favGallery ? favGallery.images : [];
+
+    if (favImages.length > 0) {
+      const randomIndex = Math.floor(Math.random() * favImages.length);
+      favCover = `images/favourites/${favImages[randomIndex]}`;
+    }
 
     let html = '';
     
@@ -108,7 +114,7 @@ async function initHomePage() {
       <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
         <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
           <div class="gallery-card__image-wrapper">
-            <img class="gallery-card__image" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500">
+            <img id="fav-cover-img" class="gallery-card__image" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="transition: opacity 0.5s ease;">
           </div>
           <div class="gallery-card__info">
             <h3 class="gallery-card__title">Favourites</h3>
@@ -139,6 +145,28 @@ async function initHomePage() {
     }
 
     container.innerHTML = html;
+    
+    // Change favourites cover image every 5 seconds
+    if (favImages.length > 1) {
+      setInterval(() => {
+        const imgEl = document.getElementById('fav-cover-img');
+        if (imgEl) {
+          const randomIndex = Math.floor(Math.random() * favImages.length);
+          const newSrc = `images/favourites/${favImages[randomIndex]}`;
+          
+          imgEl.style.opacity = '0';
+          setTimeout(() => {
+            imgEl.src = newSrc;
+            imgEl.onload = () => {
+              imgEl.style.opacity = '1';
+            };
+            imgEl.onerror = () => {
+              imgEl.style.opacity = '1'; // Restore opacity if image fails to load
+            };
+          }, 500);
+        }
+      }, 5000);
+    }
     
     // Handle anchor links after dynamic content is loaded
     if (window.location.hash) {
