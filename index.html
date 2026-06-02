@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Photography and in-game photography portfolio by Luissantra. Real-world and virtual photography from Japan, Italy, New York, and PlayStation exclusives.">
+  <title>Luissantra — Photography Portfolio</title>
+  
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=Orbitron:wght@400..900&family=Rochester&family=Silkscreen:wght@400;700&family=Baumans&display=swap" rel="stylesheet">
+  
+  <script src="scripts/main.js" defer></script>
+</head>
+<body>
+  
+  <header class="site-header">
+    <nav class="site-nav">
+      <div class="site-brand">Luissantra</div>
+      <div class="nav-links">
+        <a href="#section-featured" class="nav-link">Featured</a>
+        <a href="#section-photography" class="nav-link">Photography</a>
+        <a href="#section-in-game" class="nav-link">In-Game</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <span id="theme-icon-container" aria-hidden="true">
+            <!-- Icon injected by JS -->
+          </span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img src="images/spider-man-miles-morales/Marvel's Spider-Man_ Miles Morales_10.webp" 
+           alt="Spider-Man swinging through the city - Hero Background" 
+           fetchpriority="high" 
+           width="1920" 
+           height="1080"
+           decoding="sync">
+      <h1>Luissantra's Photography Portfolio</h1>
+    </section>
+
+    <!-- JS will inject galleries here -->
+    <section id="galleries-container" class="galleries-section" aria-label="Photography Galleries">
+      <div class="spinner"></div>
+    </section>
+  </main>
+
+  <!-- We can add a footer later if needed -->
+
+</body>
+</html>
