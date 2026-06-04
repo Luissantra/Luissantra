@@ -64,8 +64,9 @@
     "title": "Ghost Of Tsushima",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/ghost-of-tsushima/ghost-of-tsushima-01.webp",
+    "coverImage": "images/ghost-of-tsushima/ghost-of-tsushima-caratula.webp",
     "images": [
+      "ghost-of-tsushima-caratula.webp",
       "ghost-of-tsushima-01.webp",
       "ghost-of-tsushima-02.webp",
       "ghost-of-tsushima-03.webp",
@@ -89,8 +90,7 @@
       "ghost-of-tsushima-21.webp",
       "ghost-of-tsushima-22.webp",
       "ghost-of-tsushima-23.webp",
-      "ghost-of-tsushima-24.webp",
-      "ghost-of-tsushima-caratula.webp"
+      "ghost-of-tsushima-24.webp"
     ]
   },
   {
@@ -98,8 +98,9 @@
     "title": "Italy",
     "description": "Photography - Real World",
     "category": "photography",
-    "coverImage": "images/italy/italy-01.webp",
+    "coverImage": "images/italy/italy-caratula.webp",
     "images": [
+      "italy-caratula.webp",
       "italy-01.webp",
       "italy-02.webp",
       "italy-03.webp",
@@ -133,8 +134,7 @@
       "italy-31.webp",
       "italy-32.webp",
       "italy-33.webp",
-      "italy-34.webp",
-      "italy-caratula.webp"
+      "italy-34.webp"
     ]
   },
   {
@@ -142,8 +142,9 @@
     "title": "Japan",
     "description": "Photography - Real World",
     "category": "photography",
-    "coverImage": "images/japan/japan-01.webp",
+    "coverImage": "images/japan/japan-caratula.webp",
     "images": [
+      "japan-caratula.webp",
       "japan-01.webp",
       "japan-02.webp",
       "japan-03.webp",
@@ -233,8 +234,7 @@
       "japan-87.webp",
       "japan-88.webp",
       "japan-89.webp",
-      "japan-90.webp",
-      "japan-caratula.webp"
+      "japan-90.webp"
     ]
   },
   {
@@ -242,8 +242,9 @@
     "title": "New York",
     "description": "Photography - Real World",
     "category": "photography",
-    "coverImage": "images/new-york/new-york-01.webp",
+    "coverImage": "images/new-york/new-york-caratula.webp",
     "images": [
+      "new-york-caratula.webp",
       "new-york-01.webp",
       "new-york-02.webp",
       "new-york-03.webp",
@@ -271,8 +272,7 @@
       "new-york-25.webp",
       "new-york-26.webp",
       "new-york-27.webp",
-      "new-york-28.webp",
-      "new-york-caratula.webp"
+      "new-york-28.webp"
     ]
   },
   {
@@ -280,8 +280,9 @@
     "title": "Ratchet Clank Rift Apart",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/ratchet-clank-rift-apart/ratchet-clank-rift-apart-01.webp",
+    "coverImage": "images/ratchet-clank-rift-apart/ratchet-clank-rift-apart-caratula.webp",
     "images": [
+      "ratchet-clank-rift-apart-caratula.webp",
       "ratchet-clank-rift-apart-01.webp",
       "ratchet-clank-rift-apart-02.webp",
       "ratchet-clank-rift-apart-03.webp",
@@ -301,8 +302,7 @@
       "ratchet-clank-rift-apart-17.webp",
       "ratchet-clank-rift-apart-18.webp",
       "ratchet-clank-rift-apart-19.webp",
-      "ratchet-clank-rift-apart-20.webp",
-      "ratchet-clank-rift-apart-caratula.webp"
+      "ratchet-clank-rift-apart-20.webp"
     ]
   },
   {
@@ -310,8 +310,9 @@
     "title": "Red Dead Redemption 2",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/red-dead-redemption-2/red-dead-redemption-2-01.webp",
+    "coverImage": "images/red-dead-redemption-2/red-dead-redemption-2-caratula.webp",
     "images": [
+      "red-dead-redemption-2-caratula.webp",
       "red-dead-redemption-2-01.webp",
       "red-dead-redemption-2-02.webp",
       "red-dead-redemption-2-03.webp",
@@ -333,8 +334,7 @@
       "red-dead-redemption-2-19.webp",
       "red-dead-redemption-2-20.webp",
       "red-dead-redemption-2-21.webp",
-      "red-dead-redemption-2-22.webp",
-      "red-dead-redemption-2-caratula.webp"
+      "red-dead-redemption-2-22.webp"
     ]
   },
   {
@@ -342,8 +342,9 @@
     "title": "Spider Man Miles Morales",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/spider-man-miles-morales/spider-man-miles-morales-01.webp",
+    "coverImage": "images/spider-man-miles-morales/spider-man-miles-morales-caratula.webp",
     "images": [
+      "spider-man-miles-morales-caratula.webp",
       "spider-man-miles-morales-01.webp",
       "spider-man-miles-morales-02.webp",
       "spider-man-miles-morales-03.webp",
@@ -373,8 +374,7 @@
       "spider-man-miles-morales-27.webp",
       "spider-man-miles-morales-28.webp",
       "spider-man-miles-morales-29.webp",
-      "spider-man-miles-morales-30.webp",
-      "spider-man-miles-morales-caratula.webp"
+      "spider-man-miles-morales-30.webp"
     ]
   },
   {
@@ -382,16 +382,16 @@
     "title": "The Last Guardian",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/the-last-guardian/the-last-guardian-01.webp",
+    "coverImage": "images/the-last-guardian/the-last-guardian-caratula.webp",
     "images": [
+      "the-last-guardian-caratula.webp",
       "the-last-guardian-01.webp",
       "the-last-guardian-02.webp",
       "the-last-guardian-03.webp",
       "the-last-guardian-04.webp",
       "the-last-guardian-05.webp",
       "the-last-guardian-06.webp",
-      "the-last-guardian-07.webp",
-      "the-last-guardian-caratula.webp"
+      "the-last-guardian-07.webp"
     ]
   },
   {
@@ -399,8 +399,9 @@
     "title": "The Last Of Us 2",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/the-last-of-us-2/the-last-of-us-2-01.webp",
+    "coverImage": "images/the-last-of-us-2/the-last-of-us-2-caratula.webp",
     "images": [
+      "the-last-of-us-2-caratula.webp",
       "the-last-of-us-2-01.webp",
       "the-last-of-us-2-02.webp",
       "the-last-of-us-2-03.webp",
@@ -411,8 +412,7 @@
       "the-last-of-us-2-08.webp",
       "the-last-of-us-2-09.webp",
       "the-last-of-us-2-10.webp",
-      "the-last-of-us-2-11.webp",
-      "the-last-of-us-2-caratula.webp"
+      "the-last-of-us-2-11.webp"
     ]
   }
 ]

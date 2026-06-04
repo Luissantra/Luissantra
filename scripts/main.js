@@ -134,7 +134,7 @@ async function initHomePage() {
     // Add Favourites as the first featured card
     html += `
       <section class="category-section">
-        <div id="section-featured" style="scroll-margin-top: 65px;"></div>
+        <div id="section-featured" class="scroll-anchor"></div>
         <h2 class="section-title fade-in-up">Featured</h2>
         <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
           <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
@@ -153,7 +153,7 @@ async function initHomePage() {
     if (photography.length > 0) {
       html += `
         <section class="category-section">
-          <div id="section-photography" style="scroll-margin-top: 65px;"></div>
+          <div id="section-photography" class="scroll-anchor"></div>
           <h2 class="section-title fade-in-up">Photography</h2>
           <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
             ${photography.map((g, i) => renderGalleryCard(g, i)).join('')}
@@ -165,7 +165,7 @@ async function initHomePage() {
     if (inGame.length > 0) {
       html += `
         <section class="category-section">
-          <div id="section-in-game" style="scroll-margin-top: 65px;"></div>
+          <div id="section-in-game" class="scroll-anchor"></div>
           <h2 class="section-title gaming fade-in-up">In-Game Photography</h2>
           <div class="gallery-grid">
             ${inGame.map((g, i) => renderGalleryCard(g, i)).join('')}
@@ -178,7 +178,7 @@ async function initHomePage() {
     
     // Change favourites cover image every 5 seconds
     if (favImages.length > 1) {
-      setInterval(() => {
+      const carouselIntervalId = setInterval(() => {
         const imgEl = document.getElementById('fav-cover-img');
         if (imgEl) {
           const randomIndex = Math.floor(Math.random() * favImages.length);
@@ -214,8 +214,6 @@ async function initHomePage() {
   }
 }
 
-// renderFavourites is now removed from home page logic
-
 function renderGalleryCard(gallery, index) {
   // Alternate layouts like the original site
   const layout = index % 2 === 0 ? 'horizontal-left' : 'horizontal-right';
@@ -236,39 +234,100 @@ function renderGalleryCard(gallery, index) {
 /* ==========================================================================
    Gallery Page: Fetch and render specific gallery
    ========================================================================== */
-let currentImages = [];
-let currentImageIndex = 0;
+const GalleryManager = (() => {
+  let currentImages = [];
+  let currentImageIndex = 0;
 
-async function initGalleryPage() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const galleryId = urlParams.get('id');
-  
-  if (!galleryId) {
-    window.location.href = 'index.html';
-    return;
-  }
-
-  const container = document.getElementById('gallery-content');
-  if (!container) return;
-
-  try {
-    const res = await fetch('data/galleries.json');
-    if (!res.ok) throw new Error('Failed to load galleries');
-    const galleries = await res.json();
+  async function initGalleryPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const galleryId = urlParams.get('id');
     
-    if (galleryId === 'favourites') {
-      renderFavouritesGallery(galleries, container);
+    if (!galleryId) {
+      window.location.href = 'index.html';
       return;
     }
 
-    const gallery = galleries.find(g => g.id === galleryId);
-    if (!gallery) {
+    const container = document.getElementById('gallery-content');
+    if (!container) return;
+
+    try {
+      const res = await fetch('data/galleries.json');
+      if (!res.ok) throw new Error('Failed to load galleries');
+      const galleries = await res.json();
+      
+      if (galleryId === 'favourites') {
+        renderFavouritesGallery(galleries, container);
+        return;
+      }
+
+      const gallery = galleries.find(g => g.id === galleryId);
+      if (!gallery) {
+        container.innerHTML = '<p>Gallery not found.</p>';
+        return;
+      }
+
+      // Filter out caratula (cover) images
+      gallery.images = gallery.images.filter(img => !img.includes('caratula'));
+
+      document.title = `${gallery.title} — Photography Portfolio`;
+      currentImages = gallery.images.map(img => `images/${gallery.id}/${img}`);
+
+      const html = `
+        <div class="gallery-header">
+          <a href="index.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back to Home
+          </a>
+          <h1>${gallery.title}</h1>
+          <p>${gallery.description}</p>
+        </div>
+        <div class="photos-grid">
+          ${gallery.images.map((img, i) => `
+            <div class="photo-item is-loading" data-index="${i}">
+              <img src="images/${gallery.id}/${img}" alt="${gallery.title} photo ${i + 1}" loading="lazy">
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      container.innerHTML = html;
+      
+      // Attach load events
+      container.querySelectorAll('.photo-item img').forEach(img => {
+        if (img.complete) {
+          img.parentElement.classList.remove('is-loading');
+          img.parentElement.classList.add('is-loaded');
+        } else {
+          img.addEventListener('load', () => {
+            img.parentElement.classList.remove('is-loading');
+            img.parentElement.classList.add('is-loaded');
+          });
+        }
+      });
+
+      initLightbox();
+
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = '<p>Error loading gallery.</p>';
+    }
+  }
+
+  function renderFavouritesGallery(galleries, container) {
+    const favGallery = galleries.find(g => g.id === 'favourites');
+    if (!favGallery) {
       container.innerHTML = '<p>Gallery not found.</p>';
       return;
     }
 
-    document.title = `${gallery.title} — Photography Portfolio`;
-    currentImages = gallery.images.map(img => `images/${gallery.id}/${img}`);
+    document.title = `${favGallery.title} — Photography Portfolio`;
+    
+    const favourites = favGallery.images.map(img => ({
+      src: `images/${img}`,
+      alt: `Favourite shot`
+    }));
+    
+    currentImages = favourites.map(f => f.src);
 
     const html = `
       <div class="gallery-header">
@@ -276,136 +335,112 @@ async function initGalleryPage() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
           Back to Home
         </a>
-        <h1>${gallery.title}</h1>
-        <p>${gallery.description}</p>
+        <h1>${favGallery.title}</h1>
+        <p>${favGallery.description}</p>
       </div>
-      <div class="photos-grid">
-        ${gallery.images.map((img, i) => `
+      <div class="mosaic-grid" style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md) var(--space-lg);">
+        ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
+        ${favourites.map((f, i) => `
           <div class="photo-item is-loading" data-index="${i}">
-            <img src="images/${gallery.id}/${img}" alt="${gallery.title} photo ${i + 1}" loading="lazy" onload="this.parentElement.classList.remove('is-loading'); this.parentElement.classList.add('is-loaded')">
+            <img src="${f.src}" alt="${f.alt}" loading="lazy">
           </div>
         `).join('')}
       </div>
     `;
 
     container.innerHTML = html;
-    initLightbox();
-
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = '<p>Error loading gallery.</p>';
-  }
-}
-
-function renderFavouritesGallery(galleries, container) {
-  const favGallery = galleries.find(g => g.id === 'favourites');
-  if (!favGallery) {
-    container.innerHTML = '<p>Gallery not found.</p>';
-    return;
-  }
-
-  document.title = `${favGallery.title} — Photography Portfolio`;
-  
-  const favourites = favGallery.images.map(img => ({
-    src: `images/${img}`,
-    alt: `Favourite shot`
-  }));
-  
-  currentImages = favourites.map(f => f.src);
-
-  const html = `
-    <div class="gallery-header">
-      <a href="index.html" class="back-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-        Back to Home
-      </a>
-      <h1>${favGallery.title}</h1>
-      <p>${favGallery.description}</p>
-    </div>
-    <div class="mosaic-grid" style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md) var(--space-lg);">
-      ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
-      ${favourites.map((f, i) => `
-        <div class="photo-item is-loading" data-index="${i}">
-          <img src="${f.src}" alt="${f.alt}" loading="lazy" onload="this.parentElement.classList.remove('is-loading'); this.parentElement.classList.add('is-loaded')">
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  container.innerHTML = html;
-  initLightbox();
-}
-
-/* ==========================================================================
-   Lightbox (using native <dialog>)
-   ========================================================================== */
-function initLightbox() {
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImage = document.getElementById('lightbox-image');
-  if (!lightbox || !lightboxImage) return;
-
-  // Add click events to thumbnails
-  document.querySelectorAll('.photo-item').forEach(item => {
-    item.addEventListener('click', () => {
-      currentImageIndex = parseInt(item.getAttribute('data-index'));
-      openLightbox();
+    
+    // Attach load events
+    container.querySelectorAll('.photo-item img').forEach(img => {
+      if (img.complete) {
+        img.parentElement.classList.remove('is-loading');
+        img.parentElement.classList.add('is-loaded');
+      } else {
+        img.addEventListener('load', () => {
+          img.parentElement.classList.remove('is-loading');
+          img.parentElement.classList.add('is-loaded');
+        });
+      }
     });
-  });
 
-  // Lightbox controls
-  document.getElementById('lightbox-close').addEventListener('click', () => lightbox.close());
-  document.getElementById('lightbox-prev').addEventListener('click', showPrevImage);
-  document.getElementById('lightbox-next').addEventListener('click', showNextImage);
-
-  // Keyboard navigation
-  lightbox.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') showPrevImage();
-    if (e.key === 'ArrowRight') showNextImage();
-    // Escape is handled natively by <dialog>
-  });
-  
-  // Close on backdrop click (light-dismiss)
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) lightbox.close();
-  });
-}
-
-function openLightbox() {
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImage = document.getElementById('lightbox-image');
-  
-  // Show a loading state or reset
-  lightboxImage.classList.remove('is-loaded');
-  
-  // Load the full size WebP
-  lightboxImage.src = currentImages[currentImageIndex];
-  
-  // Animate in once loaded
-  lightboxImage.onload = () => {
-    lightboxImage.classList.add('is-loaded');
-  };
-
-  lightbox.showModal();
-}
-
-function showPrevImage() {
-  if (currentImageIndex > 0) {
-    currentImageIndex--;
-    openLightbox();
-  } else {
-    // Loop to end
-    currentImageIndex = currentImages.length - 1;
-    openLightbox();
+    initLightbox();
   }
-}
 
-function showNextImage() {
-  if (currentImageIndex < currentImages.length - 1) {
-    currentImageIndex++;
-    openLightbox();
-  } else {
-    // Loop to start
-    currentImageIndex = 0;
-    openLightbox();
+  /* ==========================================================================
+     Lightbox (using native <dialog>)
+     ========================================================================== */
+  function initLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    if (!lightbox || !lightboxImage) return;
+
+    // Add click events to thumbnails
+    document.querySelectorAll('.photo-item').forEach(item => {
+      item.addEventListener('click', () => {
+        currentImageIndex = parseInt(item.getAttribute('data-index'));
+        openLightbox();
+      });
+    });
+
+    // Lightbox controls
+    document.getElementById('lightbox-close').addEventListener('click', () => lightbox.close());
+    document.getElementById('lightbox-prev').addEventListener('click', showPrevImage);
+    document.getElementById('lightbox-next').addEventListener('click', showNextImage);
+
+    // Keyboard navigation
+    lightbox.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') showPrevImage();
+      if (e.key === 'ArrowRight') showNextImage();
+      // Escape is handled natively by <dialog>
+    });
+    
+    // Close on backdrop click (light-dismiss)
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.close();
+    });
   }
-}
+
+  function openLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    
+    // Show a loading state or reset
+    lightboxImage.classList.remove('is-loaded');
+    
+    // Load the full size WebP
+    lightboxImage.src = currentImages[currentImageIndex];
+    
+    // Animate in once loaded
+    lightboxImage.onload = () => {
+      lightboxImage.classList.add('is-loaded');
+    };
+
+    lightbox.showModal();
+  }
+
+  function showPrevImage() {
+    if (currentImageIndex > 0) {
+      currentImageIndex--;
+      openLightbox();
+    } else {
+      // Loop to end
+      currentImageIndex = currentImages.length - 1;
+      openLightbox();
+    }
+  }
+
+  function showNextImage() {
+    if (currentImageIndex < currentImages.length - 1) {
+      currentImageIndex++;
+      openLightbox();
+    } else {
+      // Loop to start
+      currentImageIndex = 0;
+      openLightbox();
+    }
+  }
+
+  return { initGalleryPage };
+})();
+
+const initGalleryPage = GalleryManager.initGalleryPage;

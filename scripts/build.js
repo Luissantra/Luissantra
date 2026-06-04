@@ -50,7 +50,12 @@ async function build() {
     await fs.mkdir(originalGalleryDir, { recursive: true });
 
     const files = await fs.readdir(folderPath);
-    const imageFiles = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f) && !f.startsWith('thumb_'));
+    const imageFiles = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f) && !f.startsWith('thumb_'))
+      .sort((a, b) => {
+        if (a.includes('-caratula')) return -1;
+        if (b.includes('-caratula')) return 1;
+        return a.localeCompare(b);
+      });
     
     if (imageFiles.length === 0) {
       console.log(`  No images found in ${folder}, skipping.`);
