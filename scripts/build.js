@@ -43,7 +43,7 @@ async function build() {
     const folderPath = path.join(IMAGES_DIR, folder);
     const stat = await fs.stat(folderPath);
 
-    if (!stat.isDirectory()) continue;
+    if (!stat.isDirectory() || folder === 'favourites') continue;
 
     console.log(`Processing gallery: ${folder}`);
     const originalGalleryDir = path.join(ORIGINALS_DIR, folder);
@@ -112,6 +112,27 @@ async function build() {
       });
       console.log(`  Processed ${processedImages.length} images for ${folder}`);
     }
+  }
+
+  // Add favourites gallery from data/favourites.json if exists
+  try {
+    const favPath = path.join(DATA_DIR, 'favourites.json');
+    const favData = JSON.parse(await fs.readFile(favPath, 'utf-8'));
+    
+    // Find cover image (prefer japan-caratula if it exists, else first image)
+    const coverPath = favData.find(f => f.includes('japan-caratula')) || favData[0];
+    
+    galleries.unshift({
+      id: 'favourites',
+      title: 'Favourites',
+      description: 'A curated collection of my favourite shots',
+      category: 'featured',
+      coverImage: `images/${coverPath}`,
+      images: favData
+    });
+    console.log(`Added favourites gallery with ${favData.length} images`);
+  } catch (err) {
+    console.log('No data/favourites.json found, skipping favourites gallery');
   }
 
   // Write the JSON data file

@@ -126,7 +126,7 @@ async function initHomePage() {
 
     if (favImages.length > 0) {
       const randomIndex = Math.floor(Math.random() * favImages.length);
-      favCover = `images/favourites/${favImages[randomIndex]}`;
+      favCover = `images/${favImages[randomIndex]}`;
     }
 
     let html = '';
@@ -182,7 +182,7 @@ async function initHomePage() {
         const imgEl = document.getElementById('fav-cover-img');
         if (imgEl) {
           const randomIndex = Math.floor(Math.random() * favImages.length);
-          const newSrc = `images/favourites/${favImages[randomIndex]}`;
+          const newSrc = `images/${favImages[randomIndex]}`;
           
           imgEl.style.opacity = '0';
           setTimeout(() => {
@@ -307,7 +307,7 @@ function renderFavouritesGallery(galleries, container) {
   document.title = `${favGallery.title} — Photography Portfolio`;
   
   const favourites = favGallery.images.map(img => ({
-    src: `images/favourites/${img}`,
+    src: `images/${img}`,
     alt: `Favourite shot`
   }));
   
