@@ -266,8 +266,7 @@ const GalleryManager = (() => {
         return;
       }
 
-      // Filter out caratula (cover) images
-      gallery.images = gallery.images.filter(img => !img.includes('caratula'));
+
 
       document.title = `${gallery.title} — Photography Portfolio`;
       currentImages = gallery.images.map(img => `images/${gallery.id}/${img}`);
