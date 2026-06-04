@@ -3,3 +3,6 @@ node_modules/
 
 # Archivos de sistema (macOS)
 .DS_Store
+
+# Configuración del agente de IA
+antigravity.md
