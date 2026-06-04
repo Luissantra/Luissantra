@@ -62,14 +62,38 @@ function initHeaderScroll() {
 
   let lastScrollY = window.scrollY;
   let ticking = false;
+  let isNavigating = false;
+  let scrollTimeout = null;
+
+  // Listen for clicks on navigation links to prevent header hiding during smooth scroll
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      isNavigating = true;
+      header.classList.remove('is-hidden');
+    });
+  });
 
   window.addEventListener('scroll', () => {
+    if (isNavigating) {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        isNavigating = false;
+        lastScrollY = window.scrollY;
+      }, 100);
+      
+      lastScrollY = window.scrollY;
+      return;
+    }
+
     if (!ticking) {
       window.requestAnimationFrame(() => {
-        if (window.scrollY > 100 && window.scrollY > lastScrollY) {
-          header.classList.add('is-hidden');
-        } else {
-          header.classList.remove('is-hidden');
+        if (!isNavigating) {
+          if (window.scrollY > 100 && window.scrollY > lastScrollY) {
+            header.classList.add('is-hidden');
+          } else {
+            header.classList.remove('is-hidden');
+          }
         }
         lastScrollY = window.scrollY;
         ticking = false;
@@ -109,38 +133,44 @@ async function initHomePage() {
     
     // Add Favourites as the first featured card
     html += `
-      <div id="section-featured" style="scroll-margin-top: 65px;"></div>
-      <h2 class="section-title fade-in-up">Featured</h2>
-      <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
-        <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
-          <div class="gallery-card__image-wrapper">
-            <img id="fav-cover-img" class="gallery-card__image" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="transition: opacity 0.5s ease;">
-          </div>
-          <div class="gallery-card__info">
-            <h3 class="gallery-card__title">Favourites</h3>
-            <p class="gallery-card__desc">A curated collection of the best shots</p>
-          </div>
-        </a>
-      </div>
+      <section class="category-section">
+        <div id="section-featured" style="scroll-margin-top: 65px;"></div>
+        <h2 class="section-title fade-in-up">Featured</h2>
+        <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
+          <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
+            <div class="gallery-card__image-wrapper">
+              <img id="fav-cover-img" class="gallery-card__image" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="transition: opacity 0.5s ease;">
+            </div>
+            <div class="gallery-card__info">
+              <h3 class="gallery-card__title">Favourites</h3>
+              <p class="gallery-card__desc">A curated collection of the best shots</p>
+            </div>
+          </a>
+        </div>
+      </section>
     `;
 
     if (photography.length > 0) {
       html += `
-        <div id="section-photography" style="scroll-margin-top: 65px;"></div>
-        <h2 class="section-title fade-in-up">Photography</h2>
-        <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
-          ${photography.map((g, i) => renderGalleryCard(g, i)).join('')}
-        </div>
+        <section class="category-section">
+          <div id="section-photography" style="scroll-margin-top: 65px;"></div>
+          <h2 class="section-title fade-in-up">Photography</h2>
+          <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
+            ${photography.map((g, i) => renderGalleryCard(g, i)).join('')}
+          </div>
+        </section>
       `;
     }
 
     if (inGame.length > 0) {
       html += `
-        <div id="section-in-game" style="scroll-margin-top: 65px;"></div>
-        <h2 class="section-title gaming fade-in-up">In-Game Photography</h2>
-        <div class="gallery-grid">
-          ${inGame.map((g, i) => renderGalleryCard(g, i)).join('')}
-        </div>
+        <section class="category-section">
+          <div id="section-in-game" style="scroll-margin-top: 65px;"></div>
+          <h2 class="section-title gaming fade-in-up">In-Game Photography</h2>
+          <div class="gallery-grid">
+            ${inGame.map((g, i) => renderGalleryCard(g, i)).join('')}
+          </div>
+        </section>
       `;
     }
 
