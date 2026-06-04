@@ -66,16 +66,14 @@ async function build() {
       const baseName = path.basename(file, fileExt);
       
       const largeWebpName = fileExt.toLowerCase() === '.webp' ? file : `${baseName}.webp`;
-      const thumbWebpName = `thumb_${baseName}.webp`;
       
       const largePath = path.join(folderPath, largeWebpName);
-      const thumbPath = path.join(folderPath, thumbWebpName);
       const originalBackupPath = path.join(originalGalleryDir, file);
 
       if (fileExt.toLowerCase() === '.webp') {
         processedImages.push(largeWebpName);
         if (!coverImage) {
-          coverImage = `images/${folder}/${thumbWebpName}`;
+          coverImage = `images/${folder}/${largeWebpName}`;
         }
         continue;
       }
@@ -88,13 +86,6 @@ async function build() {
           .webp({ quality: 80 })
           .toFile(largePath);
 
-        // Convert to thumbnail WebP (max width 600px)
-        await sharp(filePath)
-          .rotate()
-          .resize({ width: 600, withoutEnlargement: true })
-          .webp({ quality: 70 })
-          .toFile(thumbPath);
-
         // Move original to backup folder
         await fs.rename(filePath, originalBackupPath);
 
@@ -102,7 +93,7 @@ async function build() {
 
         // Set the first image as cover image
         if (!coverImage) {
-          coverImage = `images/${folder}/${thumbWebpName}`;
+          coverImage = `images/${folder}/${largeWebpName}`;
         }
         
       } catch (err) {

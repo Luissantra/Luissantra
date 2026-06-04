@@ -308,7 +308,6 @@ function renderFavouritesGallery(galleries, container) {
   
   const favourites = favGallery.images.map(img => ({
     src: `images/favourites/${img}`,
-    thumb: `images/favourites/thumb_${img}`,
     alt: `Favourite shot`
   }));
   
@@ -327,7 +326,7 @@ function renderFavouritesGallery(galleries, container) {
       ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
       ${favourites.map((f, i) => `
         <div class="photo-item is-loading" data-index="${i}">
-          <img src="${f.thumb}" alt="${f.alt}" loading="lazy" onload="this.parentElement.classList.remove('is-loading'); this.parentElement.classList.add('is-loaded')" onerror="this.onerror=null; this.src=this.dataset.fallback;" data-fallback="${f.src}">
+          <img src="${f.src}" alt="${f.alt}" loading="lazy" onload="this.parentElement.classList.remove('is-loading'); this.parentElement.classList.add('is-loaded')">
         </div>
       `).join('')}
     </div>
