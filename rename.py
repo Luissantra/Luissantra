@@ -2,7 +2,7 @@ import os
 import json
 import glob
 
-base_dir = "/Users/luissantra/Projects/Photography Web Portfolio"
+base_dir = os.path.dirname(os.path.abspath(__file__))
 data_file = os.path.join(base_dir, "data", "galleries.json")
 images_dir = os.path.join(base_dir, "images")
 originals_dir = os.path.join(base_dir, "originals")

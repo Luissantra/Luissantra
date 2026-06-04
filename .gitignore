@@ -2,7 +2,10 @@
 node_modules/
 
 # Archivos de sistema (macOS)
-.DS_Store
+**/.DS_Store
+
+# Imágenes originales de alta resolución
+originals/
 
 # Configuración del agente de IA
 antigravity.md
