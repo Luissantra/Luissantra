@@ -19,6 +19,9 @@
         "src": "japan/japan-21.webp"
       },
       {
+        "src": "new-york/new-york-23.webp"
+      },
+      {
         "src": "italy/italy-07.webp"
       },
       {
@@ -94,6 +97,9 @@
         "src": "japan/japan-87.webp"
       },
       {
+        "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp"
+      },
+      {
         "src": "japan/japan-89.webp"
       },
       {
@@ -112,7 +118,7 @@
         "src": "new-york/new-york-08.webp"
       },
       {
-        "src": "new-york/new-york-23.webp"
+        "src": "italy/italy-caratula.webp"
       },
       {
         "src": "new-york/new-york-25.webp"
@@ -148,9 +154,6 @@
         "src": "the-last-guardian/the-last-guardian-01.webp"
       },
       {
-        "src": "the-last-guardian/the-last-guardian-07.webp"
-      },
-      {
         "src": "ratchet-clank-rift-apart/ratchet-clank-rift-apart-10.webp"
       },
       {
@@ -161,6 +164,12 @@
       },
       {
         "src": "the-last-of-us-2/the-last-of-us-2-caratula.webp"
+      },
+      {
+        "src": "the-last-guardian/the-last-guardian-caratula.webp"
+      },
+      {
+        "src": "spider-man-miles-morales/spider-man-miles-morales-26.webp"
       }
     ]
   },
@@ -207,8 +216,9 @@
     "images": [
       "italy-caratula.webp",
       "italy-01.webp",
-      "italy-02.webp",
       "italy-03.webp",
+      "italy-02.webp",
+      "italy-18.webp",
       "italy-04.webp",
       "italy-05.webp",
       "italy-06.webp",
@@ -223,7 +233,6 @@
       "italy-15.webp",
       "italy-16.webp",
       "italy-17.webp",
-      "italy-18.webp",
       "italy-19.webp",
       "italy-20.webp",
       "italy-21.webp",
@@ -351,33 +360,33 @@
     "images": [
       "new-york-caratula.webp",
       "new-york-01.webp",
+      "new-york-23.webp",
+      "new-york-24.webp",
       "new-york-02.webp",
-      "new-york-03.webp",
-      "new-york-04.webp",
+      "new-york-25.webp",
+      "new-york-19.webp",
+      "new-york-13.webp",
+      "new-york-10.webp",
+      "new-york-08.webp",
       "new-york-05.webp",
       "new-york-06.webp",
       "new-york-07.webp",
-      "new-york-08.webp",
       "new-york-09.webp",
-      "new-york-10.webp",
       "new-york-11.webp",
       "new-york-12.webp",
-      "new-york-13.webp",
       "new-york-14.webp",
       "new-york-15.webp",
       "new-york-16.webp",
       "new-york-17.webp",
       "new-york-18.webp",
-      "new-york-19.webp",
       "new-york-20.webp",
       "new-york-21.webp",
       "new-york-22.webp",
-      "new-york-23.webp",
-      "new-york-24.webp",
-      "new-york-25.webp",
       "new-york-26.webp",
       "new-york-27.webp",
-      "new-york-28.webp"
+      "new-york-28.webp",
+      "new-york-03.webp",
+      "new-york-04.webp"
     ]
   },
   {
@@ -452,12 +461,18 @@
       "spider-man-miles-morales-caratula.webp",
       "spider-man-miles-morales-01.webp",
       "spider-man-miles-morales-02.webp",
+      "spider-man-miles-morales-29.webp",
+      "spider-man-miles-morales-08.webp",
+      "spider-man-miles-morales-25.webp",
+      "spider-man-miles-morales-27.webp",
       "spider-man-miles-morales-03.webp",
       "spider-man-miles-morales-04.webp",
+      "spider-man-miles-morales-26.webp",
+      "spider-man-miles-morales-30.webp",
+      "spider-man-miles-morales-21.webp",
       "spider-man-miles-morales-05.webp",
       "spider-man-miles-morales-06.webp",
       "spider-man-miles-morales-07.webp",
-      "spider-man-miles-morales-08.webp",
       "spider-man-miles-morales-09.webp",
       "spider-man-miles-morales-10.webp",
       "spider-man-miles-morales-11.webp",
@@ -470,16 +485,10 @@
       "spider-man-miles-morales-18.webp",
       "spider-man-miles-morales-19.webp",
       "spider-man-miles-morales-20.webp",
-      "spider-man-miles-morales-21.webp",
       "spider-man-miles-morales-22.webp",
       "spider-man-miles-morales-23.webp",
       "spider-man-miles-morales-24.webp",
-      "spider-man-miles-morales-25.webp",
-      "spider-man-miles-morales-26.webp",
-      "spider-man-miles-morales-27.webp",
-      "spider-man-miles-morales-28.webp",
-      "spider-man-miles-morales-29.webp",
-      "spider-man-miles-morales-30.webp"
+      "spider-man-miles-morales-28.webp"
     ]
   },
   {
@@ -492,9 +501,9 @@
       "the-last-guardian-caratula.webp",
       "the-last-guardian-01.webp",
       "the-last-guardian-02.webp",
+      "the-last-guardian-05.webp",
       "the-last-guardian-03.webp",
       "the-last-guardian-04.webp",
-      "the-last-guardian-05.webp",
       "the-last-guardian-06.webp",
       "the-last-guardian-07.webp"
     ]
@@ -507,9 +516,9 @@
     "coverImage": "images/the-last-of-us-2/the-last-of-us-2-caratula.webp",
     "images": [
       "the-last-of-us-2-caratula.webp",
+      "the-last-of-us-2-03.webp",
       "the-last-of-us-2-01.webp",
       "the-last-of-us-2-02.webp",
-      "the-last-of-us-2-03.webp",
       "the-last-of-us-2-04.webp",
       "the-last-of-us-2-05.webp",
       "the-last-of-us-2-06.webp",
