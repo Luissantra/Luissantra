@@ -4,14 +4,22 @@
   "description": "Photography and in-game photography portfolio by Luissantra.",
   "scripts": {
     "build": "node scripts/build.js",
-    "start": "python3 -m http.server 8080"
+    "start": "python3 -m http.server 8080",
+    "admin": "node admin-server.js"
   },
-  "keywords": ["photography", "portfolio", "in-game-photography"],
+  "keywords": [
+    "photography",
+    "portfolio",
+    "in-game-photography"
+  ],
   "author": "Luissantra",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "sharp": "^0.34.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
+  }
 }

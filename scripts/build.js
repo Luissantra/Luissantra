@@ -36,6 +36,12 @@ async function build() {
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.mkdir(ORIGINALS_DIR, { recursive: true });
 
+  let existingGalleries = [];
+  try {
+    const jsonPath = path.join(DATA_DIR, 'galleries.json');
+    existingGalleries = JSON.parse(await fs.readFile(jsonPath, 'utf-8'));
+  } catch (err) { }
+
   const galleries = [];
   const folders = await fs.readdir(IMAGES_DIR);
 
@@ -107,6 +113,30 @@ async function build() {
     }
 
     if (processedImages.length > 0) {
+      const existingGallery = existingGalleries.find(g => g.id === folder);
+      
+      if (existingGallery && existingGallery.images) {
+        // Create an index map to preserve order
+        const orderMap = new Map();
+        existingGallery.images.forEach((img, idx) => orderMap.set(img, idx));
+        
+        processedImages.sort((a, b) => {
+          const indexA = orderMap.has(a) ? orderMap.get(a) : Infinity;
+          const indexB = orderMap.has(b) ? orderMap.get(b) : Infinity;
+          if (indexA !== Infinity || indexB !== Infinity) {
+             return indexA - indexB;
+          }
+          if (a.includes('-caratula')) return -1;
+          if (b.includes('-caratula')) return 1;
+          return a.localeCompare(b);
+        });
+
+        // Preserve coverImage if it's still valid
+        if (existingGallery.coverImage && processedImages.includes(path.basename(existingGallery.coverImage))) {
+            coverImage = existingGallery.coverImage;
+        }
+      }
+
       galleries.push({
         id: folder,
         title: formatTitle(folder),
@@ -122,22 +152,26 @@ async function build() {
   // Add favourites gallery from data/favourites.json if exists
   try {
     const favPath = path.join(DATA_DIR, 'favourites.json');
-    const favData = JSON.parse(await fs.readFile(favPath, 'utf-8'));
+    const favDataRaw = JSON.parse(await fs.readFile(favPath, 'utf-8'));
+    
+    // Normalize to objects for internal use
+    const favData = favDataRaw.map(f => typeof f === 'string' ? { src: f } : f);
     
     // Find cover image (prefer japan-caratula if it exists, else first image)
-    const coverPath = favData.find(f => f.includes('japan-caratula')) || favData[0];
+    const coverObj = favData.find(f => f.src.includes('japan-caratula')) || favData[0];
+    const coverPath = coverObj ? coverObj.src : '';
     
     galleries.unshift({
       id: 'favourites',
       title: 'Favourites',
       description: 'A curated collection of my favourite shots',
       category: 'featured',
-      coverImage: `images/${coverPath}`,
+      coverImage: coverPath ? `images/${coverPath}` : '',
       images: favData
     });
     console.log(`Added favourites gallery with ${favData.length} images`);
   } catch (err) {
-    console.log('No data/favourites.json found, skipping favourites gallery');
+    console.log('No data/favourites.json found or error reading it:', err.message);
   }
 
   // Write the JSON data file

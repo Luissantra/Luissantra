@@ -3,6 +3,9 @@
  * Handles Theme Toggle, Dynamic Routing, and Lightbox
  */
 
+let carouselIntervalId = null;
+let isNavigating = typeof window !== 'undefined' && !!window.location.hash;
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initHeaderScroll();
@@ -30,6 +33,7 @@ function initTheme() {
   
   const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', currentTheme);
+  themeToggle.setAttribute('aria-pressed', (currentTheme === 'dark').toString());
   updateThemeIcon(currentTheme);
 
   themeToggle.addEventListener('click', () => {
@@ -37,6 +41,7 @@ function initTheme() {
     const newTheme = isDark ? 'light' : 'dark';
     
     document.documentElement.setAttribute('data-theme', newTheme);
+    themeToggle.setAttribute('aria-pressed', (newTheme === 'dark').toString());
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
   });
@@ -62,7 +67,6 @@ function initHeaderScroll() {
 
   let lastScrollY = window.scrollY;
   let ticking = false;
-  let isNavigating = false;
   let scrollTimeout = null;
 
   // Listen for clicks on navigation links to prevent header hiding during smooth scroll
@@ -124,9 +128,12 @@ async function initHomePage() {
     let favCover = favGallery && favGallery.coverImage ? favGallery.coverImage : (photography[0]?.coverImage || '');
     let favImages = favGallery ? favGallery.images : [];
 
+    let lastFavIndex = -1;
     if (favImages.length > 0) {
-      const randomIndex = Math.floor(Math.random() * favImages.length);
-      favCover = `images/${favImages[randomIndex]}`;
+      lastFavIndex = Math.floor(Math.random() * favImages.length);
+      const randomImg = favImages[lastFavIndex];
+      const imgSrc = typeof randomImg === 'string' ? randomImg : randomImg.src;
+      favCover = `images/${imgSrc}`;
     }
 
     let html = '';
@@ -177,12 +184,24 @@ async function initHomePage() {
     container.innerHTML = html;
     
     // Change favourites cover image every 5 seconds
-    if (favImages.length > 1) {
-      const carouselIntervalId = setInterval(() => {
+    if (carouselIntervalId) {
+      clearInterval(carouselIntervalId);
+    }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (favImages.length > 1 && !prefersReducedMotion) {
+      carouselIntervalId = setInterval(() => {
         const imgEl = document.getElementById('fav-cover-img');
         if (imgEl) {
-          const randomIndex = Math.floor(Math.random() * favImages.length);
-          const newSrc = `images/${favImages[randomIndex]}`;
+          let randomIndex;
+          do {
+            randomIndex = Math.floor(Math.random() * favImages.length);
+          } while (randomIndex === lastFavIndex);
+          lastFavIndex = randomIndex;
+
+          const randomImg = favImages[randomIndex];
+          const imgSrc = typeof randomImg === 'string' ? randomImg : randomImg.src;
+          const newSrc = `images/${imgSrc}`;
           
           imgEl.style.opacity = '0';
           setTimeout(() => {
@@ -203,7 +222,19 @@ async function initHomePage() {
       setTimeout(() => {
         const target = document.querySelector(window.location.hash);
         if (target) {
+          isNavigating = true;
+          const header = document.querySelector('.site-header');
+          if (header) {
+            header.classList.remove('is-hidden');
+          }
           target.scrollIntoView({ behavior: 'smooth' });
+          
+          // Safety fallback: reset isNavigating after 1.5s in case scroll event didn't fire
+          setTimeout(() => {
+            isNavigating = false;
+          }, 1500);
+        } else {
+          isNavigating = false;
         }
       }, 100);
     }
@@ -237,6 +268,7 @@ function renderGalleryCard(gallery, index) {
 const GalleryManager = (() => {
   let currentImages = [];
   let currentImageIndex = 0;
+  let resizeController = null;
 
   async function initGalleryPage() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -266,10 +298,8 @@ const GalleryManager = (() => {
         return;
       }
 
-
-
       document.title = `${gallery.title} — Photography Portfolio`;
-      currentImages = gallery.images.map(img => `images/${gallery.id}/${img}`);
+      currentImages = gallery.images.map(img => `images/${gallery.id}/${typeof img === 'string' ? img : img.src}`);
 
       const html = `
         <div class="gallery-header">
@@ -283,7 +313,7 @@ const GalleryManager = (() => {
         <div class="photos-grid">
           ${gallery.images.map((img, i) => `
             <div class="photo-item is-loading" data-index="${i}">
-              <img src="images/${gallery.id}/${img}" alt="${gallery.title} photo ${i + 1}" loading="lazy">
+              <img src="images/${gallery.id}/${typeof img === 'string' ? img : img.src}" alt="${gallery.title} photo ${i + 1}" loading="lazy">
             </div>
           `).join('')}
         </div>
@@ -312,6 +342,36 @@ const GalleryManager = (() => {
     }
   }
 
+  function resizeAllGridItems(container) {
+    const grid = container.querySelector('.mosaic-grid') || document.querySelector('.mosaic-grid');
+    if (!grid || grid.classList.contains('is-classic')) return;
+
+    const items = grid.querySelectorAll('.photo-item');
+    
+    // Batch DOM reads: Get all computed heights and gaps mathematically
+    const rowHeight = 10;
+    const gapStr = window.getComputedStyle(grid).getPropertyValue('row-gap');
+    const rowGap = parseInt(gapStr) || 0;
+    
+    const measurements = Array.from(items).map(item => {
+      const img = item.querySelector('img');
+      const dim = item.getBoundingClientRect();
+      if (!img || !(img.naturalWidth > 0)) return { calculatedHeight: 0 };
+      const calculatedHeight = dim.width * (img.naturalHeight / img.naturalWidth);
+      return { calculatedHeight };
+    });
+
+    // Batch DOM writes: Set new spans and contain-intrinsic-size
+    items.forEach((item, i) => {
+      const { calculatedHeight } = measurements[i];
+      if (calculatedHeight > 0) {
+        const rowSpan = Math.ceil((calculatedHeight + rowGap) / (rowHeight + rowGap));
+        item.style.gridRowEnd = `span ${rowSpan}`;
+        item.style.containIntrinsicSize = 'auto none auto ' + Math.round(calculatedHeight) + 'px';
+      }
+    });
+  }
+
   function renderFavouritesGallery(galleries, container) {
     const favGallery = galleries.find(g => g.id === 'favourites');
     if (!favGallery) {
@@ -321,10 +381,24 @@ const GalleryManager = (() => {
 
     document.title = `${favGallery.title} — Photography Portfolio`;
     
-    const favourites = favGallery.images.map(img => ({
-      src: `images/${img}`,
-      alt: `Favourite shot`
-    }));
+    const favourites = favGallery.images.map((img, index) => {
+      const isObj = typeof img !== 'string';
+      const srcStr = isObj ? img.src : img;
+      
+      // Auto fallback logic (Option C): If manual 'featured' is undefined, make every 6th image featured automatically.
+      let isFeatured = false;
+      if (isObj && img.featured !== undefined) {
+        isFeatured = img.featured;
+      } else {
+        isFeatured = (index % 6 === 0);
+      }
+      
+      return {
+        src: `images/${srcStr}`,
+        alt: `Favourite shot`,
+        featured: isFeatured
+      };
+    });
     
     currentImages = favourites.map(f => f.src);
 
@@ -336,11 +410,17 @@ const GalleryManager = (() => {
         </a>
         <h1>${favGallery.title}</h1>
         <p>${favGallery.description}</p>
+        <div style="margin-top: 1.5rem;">
+          <button id="toggle-mosaic-mode" class="nav-link layout-toggle-btn" aria-pressed="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            Show Classic 3-Column
+          </button>
+        </div>
       </div>
       <div class="mosaic-grid" style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md) var(--space-lg);">
         ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
         ${favourites.map((f, i) => `
-          <div class="photo-item is-loading" data-index="${i}">
+          <div class="photo-item is-loading" data-index="${i}" data-featured="${f.featured ? 'true' : 'false'}" style="view-transition-name: photo-${i};">
             <img src="${f.src}" alt="${f.alt}" loading="lazy">
           </div>
         `).join('')}
@@ -348,19 +428,127 @@ const GalleryManager = (() => {
     `;
 
     container.innerHTML = html;
-    
-    // Attach load events
-    container.querySelectorAll('.photo-item img').forEach(img => {
+
+    const grid = container.querySelector('.mosaic-grid');
+    const allImgs = container.querySelectorAll('.photo-item img');
+    const totalImages = allImgs.length;
+    let loadedCount = 0;
+    let hasFinalized = false;
+
+    function finalizeGrid() {
+      if (hasFinalized) return;
+      hasFinalized = true;
+
+      // Apply featured classes based on aspect ratio
+      container.querySelectorAll('.photo-item').forEach(item => {
+        const img = item.querySelector('img');
+        if (!img || !img.naturalWidth) return;
+
+        item.classList.remove('is-loading');
+        item.classList.add('is-loaded');
+
+        if (item.getAttribute('data-featured') === 'true') {
+          const ratio = img.naturalWidth / img.naturalHeight;
+          if (ratio > 1.2) {
+            item.classList.add('photo-item--wide');
+          } else if (ratio < 0.8) {
+            // Vertical: keep 1 column, natural height makes it stand out
+          } else {
+            item.classList.add('photo-item--featured');
+          }
+        }
+      });
+
+      // Single batch resize
+      resizeAllGridItems(container);
+
+      // Fade in the grid
+      requestAnimationFrame(() => {
+        grid.classList.add('is-ready');
+      });
+    }
+
+    function onImageSettled() {
+      loadedCount++;
+      const item = this.parentElement;
+      if (item) {
+        item.classList.remove('is-loading');
+        item.classList.add('is-loaded');
+      }
+      if (loadedCount >= totalImages) {
+        finalizeGrid();
+      }
+    }
+
+    allImgs.forEach(img => {
       if (img.complete) {
-        img.parentElement.classList.remove('is-loading');
-        img.parentElement.classList.add('is-loaded');
+        loadedCount++;
+        const item = img.parentElement;
+        if (item) {
+          item.classList.remove('is-loading');
+          item.classList.add('is-loaded');
+        }
       } else {
-        img.addEventListener('load', () => {
-          img.parentElement.classList.remove('is-loading');
-          img.parentElement.classList.add('is-loaded');
-        });
+        img.addEventListener('load', onImageSettled);
+        img.addEventListener('error', onImageSettled);
       }
     });
+
+    // If all images were cached, finalize immediately
+    if (loadedCount >= totalImages) {
+      finalizeGrid();
+    }
+
+    // Safety timeout: show the grid after 3s even if some images haven't loaded
+    setTimeout(() => {
+      finalizeGrid();
+    }, 3000);
+
+    // Debounced resize listener
+    if (resizeController) {
+      resizeController.abort();
+    }
+    resizeController = new AbortController();
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resizeAllGridItems(container);
+      }, 150);
+    }, { signal: resizeController.signal });
+
+    const toggleBtn = document.getElementById('toggle-mosaic-mode');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const isClassicModeNext = !grid.classList.contains('is-classic');
+        toggleBtn.setAttribute('aria-pressed', isClassicModeNext.toString());
+
+        if (!document.startViewTransition) {
+          doTransition();
+          return;
+        }
+
+        document.startViewTransition(() => {
+          doTransition();
+        });
+
+        function doTransition() {
+          grid.classList.toggle('is-classic');
+          const isClassic = grid.classList.contains('is-classic');
+          
+          if (isClassic) {
+            toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Show Featured Mosaic';
+            grid.querySelectorAll('.photo-item').forEach(item => {
+              item.style.gridRowEnd = '';
+            });
+          } else {
+            toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Show Classic 3-Column';
+            resizeAllGridItems(container);
+          }
+        }
+      });
+    }
 
     initLightbox();
   }

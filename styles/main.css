@@ -416,39 +416,98 @@ button {
    Favourites Mosaic
    ========================================================================== */
 .mosaic-grid {
-  column-count: 3;
-  column-gap: calc(var(--space-sm) * 2 / 3);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 10px;
+  gap: calc(var(--space-sm) * 2 / 3);
   padding: 0;
-  display: block;
+  align-items: start;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.mosaic-grid.is-ready {
+  opacity: 1;
 }
 
 @media (max-width: 1024px) {
   .mosaic-grid {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 10px;
+  }
+  .mosaic-grid .photo-item--wide,
+  .mosaic-grid .photo-item--featured {
+    grid-column: auto;
   }
 }
 
 @media (max-width: 600px) {
   .mosaic-grid {
-    column-count: 1;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 10px;
   }
 }
 
 .mosaic-grid .photo-item {
-  display: inline-block; /* Prevent breaking across columns */
   width: 100%;
-  height: auto;
-  margin-bottom: calc(var(--space-sm) * 2 / 3);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  content-visibility: visible; /* Fix multi-column rendering bug */
+  height: auto;
+}
+
+/* Modifier classes for grid spans */
+.mosaic-grid .photo-item--wide {
+  grid-column: span 2;
+}
+.mosaic-grid .photo-item--featured {
+  grid-column: span 2;
+}
+
+/* Classic 3-Column Mode Overrides */
+.mosaic-grid.is-classic {
+  display: block;
+  column-count: 3;
+  column-gap: calc(var(--space-sm) * 2 / 3);
+}
+
+@media (max-width: 1024px) {
+  .mosaic-grid.is-classic {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .mosaic-grid.is-classic {
+    column-count: 1;
+  }
+}
+
+.mosaic-grid.is-classic .photo-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: calc(var(--space-sm) * 2 / 3);
+  grid-row-end: auto !important; /* Override JS masonry spans */
+  height: auto;
+}
+
+.mosaic-grid.is-classic .photo-item img {
+  object-fit: contain;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  /* On 1 column, reset spans */
+  .mosaic-grid .photo-item--wide,
+  .mosaic-grid .photo-item--tall,
+  .mosaic-grid .photo-item--featured {
+    grid-column: auto;
+  }
 }
 
 .mosaic-grid .photo-item img {
   width: 100%;
   height: auto;
   display: block;
-  object-fit: contain;
 }
 
 /* ==========================================================================
@@ -485,6 +544,16 @@ button {
   color: var(--color-text);
 }
 
+.layout-toggle-btn {
+  border: 1px solid currentColor;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .photos-grid {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -509,9 +578,9 @@ button {
 }
 
 /* Use content-visibility for performance on massive galleries */
-.photo-item {
+.photo-item:nth-child(n+9) {
   content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
+  contain-intrinsic-size: auto none auto 600px;
 }
 
 .photo-item img {
