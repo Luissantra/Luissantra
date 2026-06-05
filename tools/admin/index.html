@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography CMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        /* CSS reset & base */
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; background-color: #0d0d0d; color: #ededed; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Layout */
+        aside { width: 280px; background: #161616; border-right: 1px solid #2a2a2a; display: flex; flex-direction: column; }
+        main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        
+        /* Sidebar styling */
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #2a2a2a; }
+        .sidebar-header h1 { margin: 0; font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; }
+        .gallery-list { flex: 1; overflow-y: auto; padding: 12px; }
+        
+        button { font-family: inherit; cursor: pointer; border: none; border-radius: 6px; transition: all 0.2s ease; }
+        .btn-gallery { width: 100%; text-align: left; padding: 12px 16px; background: transparent; color: #a0a0a0; font-size: 0.95rem; margin-bottom: 4px; }
+        .btn-gallery:hover { background: #222; color: #fff; }
+        .btn-gallery.active { background: #2a2a2a; color: #fff; font-weight: 500; }
+        
+        .sidebar-footer { padding: 20px; border-top: 1px solid #2a2a2a; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* Buttons */
+        .btn-primary { background: #0070f3; color: white; padding: 12px; font-weight: 500; width: 100%; }
+        .btn-primary:hover { background: #0051a8; }
+        .btn-secondary { background: #2a2a2a; color: #ededed; padding: 10px; width: 100%; }
+        .btn-secondary:hover { background: #333; }
+
+        /* Main Content */
+        .main-header { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2a2a; }
+        .main-header h2 { margin: 0; font-weight: 500; font-size: 1.5rem; }
+        
+        .content { flex: 1; padding: 40px; overflow-y: auto; }
+        
+        /* Upload Area */
+        .upload-area { border: 2px dashed #333; border-radius: 12px; padding: 40px; text-align: center; color: #888; transition: border-color 0.2s, background 0.2s; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        .upload-area.dragover { border-color: #0070f3; background: rgba(0, 112, 243, 0.05); color: #fff; }
+        .upload-area input[type="file"] { display: none; }
+        .upload-btn { background: #222; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; color: #eee; }
+        .upload-btn:hover { background: #333; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .grid-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #222; cursor: grab; border: 2px solid transparent; transition: border-color 0.2s; }
+        .grid-item:hover { border-color: #555; }
+        .grid-item:active { cursor: grabbing; }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .grid-item .badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; z-index: 10; }
+        .grid-item .badge-fav { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.85); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; z-index: 10; }
+        
+        /* Actions overlay */
+        .actions { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0; transition: opacity 0.2s; }
+        .grid-item:hover .actions { opacity: 1; }
+        .action-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.2s; }
+        .action-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
+        .action-btn.active { color: #facc15; }
+        .action-btn.fav-active { color: #ef4444; }
+        .action-btn.delete:hover { background: rgba(239, 68, 68, 0.8); }
+        .action-btn svg { width: 18px; height: 18px; }
+        
+        /* Dialog */
+        dialog { background: #161616; color: #eee; border: 1px solid #333; border-radius: 12px; padding: 24px; max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        dialog::backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        dialog h3 { margin-top: 0; }
+        dialog input { width: 100%; padding: 12px; background: #0d0d0d; border: 1px solid #333; color: white; border-radius: 6px; margin-bottom: 16px; outline: none; }
+        dialog input:focus { border-color: #0070f3; }
+        .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        
+        /* Loader Overlay */
+        .loader-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        .loader-overlay.active { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: #0070f3; animation: spin 1s ease-in-out infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toasts */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .toast { background: #222; border: 1px solid #333; padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .hidden { display: none !important; }
+        .ghost { opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="sidebar-header">
+            <h1>Photography CMS</h1>
+        </div>
+        <div class="gallery-list" id="gallery-list">
+            <!-- Galleries injected here -->
+        </div>
+        <div class="sidebar-footer">
+            <button class="btn-secondary" onclick="document.getElementById('new-gallery-dialog').showModal()">+ Nueva Galería</button>
+            <button class="btn-primary" onclick="buildProject()">🚀 Build & Optimize</button>
+        </div>
+    </aside>
+
+    <main>
+        <div class="main-header">
+            <h2 id="current-gallery-title">Selecciona una galería</h2>
+        </div>
+        
+        <div class="content">
+            <div id="upload-section" class="upload-area hidden" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <div style="font-size: 1.1rem; font-weight: 500; color: #fff;">Arrastra fotos nuevas aquí para subirlas</div>
+                <div>o</div>
+                <button class="upload-btn" onclick="document.getElementById('file-input').click()">Navegar Archivos</button>
+                <input type="file" id="file-input" multiple accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+            
+            <p style="color: #aaa; margin-bottom: 20px;">Arrastra las fotos para cambiar su orden automáticamente.</p>
+            <div class="grid" id="sortable-grid">
+                <!-- Images injected here -->
+            </div>
+        </div>
+
+        <div class="loader-overlay" id="loader">
+            <div class="spinner"></div>
+            <h3 id="loader-text">Procesando...</h3>
+        </div>
+    </main>
+
+    <dialog id="new-gallery-dialog">
+        <h3>Crear Nueva Galería</h3>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 16px;">Introduce un ID único para la carpeta (ej. <code>viaje-japon-2026</code>). Solo minúsculas y guiones.</p>
+        <input type="text" id="new-gallery-id" placeholder="id-de-galeria">
+        <div class="dialog-actions">
+            <button class="btn-secondary" style="width: auto;" onclick="document.getElementById('new-gallery-dialog').close()">Cancelar</button>
+            <button class="btn-primary" style="width: auto;" onclick="createGallery()">Crear</button>
+        </div>
+    </dialog>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        let apiData = { galleries: [], favourites: [], availableFolders: [] };
+        let currentGalleryId = null;
+        let sortableInstance = null;
+        let sidebarSortable = null;
+
+        async function init(preserveGallery = false) {
+            try {
+                const res = await fetch('/api/data');
+                apiData = await res.json();
+                renderSidebar();
+                if (!preserveGallery && apiData.galleries.length > 0) {
+                    loadGallery(apiData.galleries[0].id);
+                }
+            } catch (e) {
+                showToast("Error loading data", "error");
+            }
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('gallery-list');
+            list.innerHTML = '';
+            
+            const renderedIds = new Set();
+            let photoIndex = 0;
+            let inGameIndex = 0;
+            
+            apiData.galleries.forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-gallery';
+                btn.onclick = () => loadGallery(g.id);
+                btn.dataset.id = g.id;
+                
+                let titleHtml = g.title;
+                if (g.id !== 'favourites') {
+                    let layoutIndex = 0;
+                    if (g.category === 'photography') {
+                        layoutIndex = photoIndex++;
+                    } else if (g.category === 'in-game') {
+                        layoutIndex = inGameIndex++;
+                    }
+                    const arrow = layoutIndex % 2 === 0 ? '←' : '→';
+                    titleHtml = `<span style="float:right; opacity:0.5">${arrow}</span> ${g.title}`;
+                } else {
+                    titleHtml = `★ ${g.title}`;
+                }
+                
+                btn.innerHTML = titleHtml;
+                list.appendChild(btn);
+                renderedIds.add(g.id);
+            });
+
+            // Render empty folders that exist but aren't in galleries.json yet
+            if (apiData.availableFolders) {
+                apiData.availableFolders.forEach(folder => {
+                    if (!renderedIds.has(folder)) {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-gallery';
+                        btn.innerText = folder + " (Draft)";
+                        btn.style.fontStyle = "italic";
+                        btn.onclick = () => loadGallery(folder);
+                        btn.dataset.id = folder;
+                        list.appendChild(btn);
+                    }
+                });
+            }
+
+            if (sidebarSortable) sidebarSortable.destroy();
+            sidebarSortable = new Sortable(list, {
+                animation: 150,
+                ghostClass: 'ghost',
+                filter: '[data-id="favourites"]',
+                onMove: function (evt) {
+                    if (evt.related.dataset.id === 'favourites') {
+                        return false;
+                    }
+                },
+                onEnd: function () {
+                    updateGalleryOrder();
+                }
+            });
+            
+            if (currentGalleryId) {
+                const activeBtn = document.querySelector(`.btn-gallery[data-id="${currentGalleryId}"]`);
+                if (activeBtn) activeBtn.classList.add('active');
+            }
+        }
+
+        function updateGalleryOrder() {
+            const list = document.getElementById('gallery-list');
+            const newOrderIds = Array.from(list.children).map(btn => btn.dataset.id);
+            
+            const newGalleries = [];
+            newOrderIds.forEach(id => {
+                const gallery = apiData.galleries.find(g => g.id === id);
+                if (gallery) {
+                    newGalleries.push(gallery);
+                }
+            });
+            
+            apiData.galleries = newGalleries;
+            saveOrder().then(() => {
+                renderSidebar();
+            });
+        }
+
+        function loadGallery(id) {
+            document.querySelectorAll('.btn-gallery').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.querySelector(`.btn-gallery[data-id="${id}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            currentGalleryId = id;
+            
+            const gallery = apiData.galleries.find(g => g.id === id);
+            document.getElementById('current-gallery-title').innerText = gallery ? gallery.title : id;
+            
+            const uploadSection = document.getElementById('upload-section');
+            if (id === 'favourites') {
+                uploadSection.classList.add('hidden');
+            } else {
+                uploadSection.classList.remove('hidden');
+            }
+
+            const grid = document.getElementById('sortable-grid');
+            grid.innerHTML = '';
+
+            let images = [];
+            if (id === 'favourites') {
+                images = Array.isArray(apiData.favourites) ? apiData.favourites : [];
+                images = images.map(i => typeof i === 'string' ? i : i.src);
+            } else if (gallery) {
+                images = gallery.images || [];
+            }
+
+            images.forEach(img => {
+                let imgSrc = id === 'favourites' ? `/images/${img}` : `/images/${id}/${img}`;
+                
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.dataset.img = img;
+                
+                let badgeHtml = '';
+                let isCover = false;
+                if (id !== 'favourites' && gallery && gallery.coverImage && gallery.coverImage.endsWith(img)) {
+                    badgeHtml = '<div class="badge">Portada</div>';
+                    isCover = true;
+                }
+
+                const srcPath = id === 'favourites' ? img : `${id}/${img}`;
+                const isFav = apiData.favourites && apiData.favourites.some(f => (typeof f === 'string' ? f : f.src) === srcPath);
+
+                let favBadgeHtml = '';
+                if (id !== 'favourites' && isFav) {
+                    favBadgeHtml = '<div class="badge-fav">❤</div>';
+                }
+
+                item.innerHTML = `
+                    ${badgeHtml}
+                    ${favBadgeHtml}
+                    <img src="${imgSrc}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' fill=\\'none\\' viewBox=\\'0 0 24 24\\' stroke=\\'%23666\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\\'/></svg>'">
+                    <div class="actions">
+                        ${id !== 'favourites' ? `<button class="action-btn ${isCover ? 'active' : ''}" onclick="setCover('${img}')" title="Marcar como portada"><svg fill="${isCover ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></button>` : ''}
+                        ${id !== 'favourites' ? `<button class="action-btn fav-btn ${isFav ? 'fav-active' : ''}" onclick="toggleFavourite('${img}', this.closest('.grid-item'))" title="Añadir a favoritos"><svg fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>` : ''}
+                        <button class="action-btn delete" onclick="deletePhoto('${img}')" title="Eliminar"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+
+            if (sortableInstance) sortableInstance.destroy();
+            sortableInstance = new Sortable(grid, {
+                animation: 150,
+                ghostClass: 'ghost',
+                filter: '.action-btn',
+                onEnd: function () {
+                    updateLocalDataFromGrid();
+                }
+            });
+        }
+
+        function updateLocalDataFromGrid() {
+            if (!currentGalleryId) return;
+            const grid = document.getElementById('sortable-grid');
+            const newOrder = Array.from(grid.children).map(child => child.dataset.img);
+            
+            let oldOrder = [];
+            if (currentGalleryId === 'favourites') {
+                oldOrder = (apiData.favourites || []).map(f => typeof f === 'string' ? f : f.src);
+            } else {
+                const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
+                if (gallery) {
+                    oldOrder = gallery.images || [];
+                }
+            }
+
+            // Comparar si el orden realmente cambió
+            const orderChanged = oldOrder.length !== newOrder.length || newOrder.some((img, idx) => img !== oldOrder[idx]);
+            if (!orderChanged) return;
+
+            if (currentGalleryId === 'favourites') {
+                apiData.favourites = newOrder;
+                const favGallery = apiData.galleries.find(g => g.id === 'favourites');
+                if (favGallery) favGallery.images = newOrder;
+            } else {
+                const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
+                if (gallery) {
+                    gallery.images = newOrder;
+                }
+            }
+            saveOrder();
+        }
+
+        async function saveOrder() {
+            try {
+                await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ galleries: apiData.galleries, favourites: apiData.favourites })
+                });
+                showToast("Orden guardado. (No olvides hacer Build al terminar)", "success");
+            } catch (e) {
+                showToast("Error al guardar", "error");
+            }
+        }
+
+        function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-section').classList.add('dragover'); }
+        function handleDragLeave(e) { e.preventDefault(); document.getElementById('upload-section').classList.remove('dragover'); }
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('upload-section').classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+        }
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) uploadFiles(e.target.files);
+        }
+        
+        async function uploadFiles(fileList) {
+            if (!currentGalleryId || currentGalleryId === 'favourites') return;
+            
+            const formData = new FormData();
+            formData.append('galleryId', currentGalleryId);
+            for (let i = 0; i < fileList.length; i++) {
+                formData.append('photos', fileList[i]);
+            }
+
+            showLoader("Subiendo fotos...");
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`¡Subidas ${data.files.length} fotos! Ejecuta "Build" para optimizarlas.`, "success");
+                    
+                    const grid = document.getElementById('sortable-grid');
+                    data.files.forEach(filename => {
+                        const item = document.createElement('div');
+                        item.className = 'grid-item';
+                        item.dataset.img = filename;
+                        item.innerHTML = `<img src="/images/${currentGalleryId}/${filename}" loading="lazy">`;
+                        grid.appendChild(item);
+                        
+                        const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
+                        if (gallery) gallery.images.push(filename);
+                    });
+                    if (apiData.galleries.find(g => g.id === currentGalleryId)) {
+                        saveOrder();
+                    }
+                }
+            } catch (e) {
+                showToast("Error al subir", "error");
+            }
+            hideLoader();
+        }
+
+        async function createGallery() {
+            const input = document.getElementById('new-gallery-id');
+            const id = input.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            if (!id) return;
+
+            try {
+                const res = await fetch('/api/gallery/new', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ galleryId: id })
+                });
+                if (res.ok) {
+                    document.getElementById('new-gallery-dialog').close();
+                    input.value = '';
+                    await init(true);
+                    loadGallery(id);
+                    showToast("¡Galería creada! Arrastra fotos para empezar.", "success");
+                }
+            } catch (e) {
+                showToast("Error al crear la galería", "error");
+            }
+        }
+
+        async function buildProject() {
+            showLoader("Construyendo y optimizando fotos...");
+            try {
+                const res = await fetch('/api/build', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("¡Optimización completada!", "success");
+                    await init(true); 
+                } else {
+                    showToast("Error en Build. Revisa la consola.", "error");
+                }
+            } catch (e) {
+                showToast("Error de conexión", "error");
+            }
+            hideLoader();
+        }
+
+        async function deletePhoto(photo) {
+            if (currentGalleryId !== 'favourites') {
+                if (!confirm("¿Seguro que quieres borrar esta foto de tu disco duro? Esta acción no se puede deshacer.")) return;
+            } else {
+                if (!confirm("¿Quitar esta foto de tus favoritos?")) return;
+            }
+            
+            showLoader("Eliminando...");
+            try {
+                const res = await fetch('/api/photo/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ galleryId: currentGalleryId, photo })
+                });
+                if (res.ok) {
+                    await init(true);
+                    loadGallery(currentGalleryId);
+                    showToast("Foto eliminada", "success");
+                }
+            } catch (e) {
+                showToast("Error al eliminar", "error");
+            }
+            hideLoader();
+        }
+
+        async function toggleFavourite(photo, itemElement) {
+            const srcPath = `${currentGalleryId}/${photo}`;
+            const isFav = apiData.favourites && apiData.favourites.some(f => (typeof f === 'string' ? f : f.src) === srcPath);
+            
+            // 1. Actualización optimista inmediata
+            updateFavouriteUI(itemElement, photo, !isFav);
+            if (!isFav) {
+                apiData.favourites.push(srcPath);
+                // También agregarlo al objeto gallery de apiData por si acaso se vuelve a renderizar
+                const favGallery = apiData.galleries.find(g => g.id === 'favourites');
+                if (favGallery) {
+                    if (!favGallery.images) favGallery.images = [];
+                    favGallery.images.push(srcPath);
+                }
+            } else {
+                apiData.favourites = apiData.favourites.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
+                const favGallery = apiData.galleries.find(g => g.id === 'favourites');
+                if (favGallery && favGallery.images) {
+                    favGallery.images = favGallery.images.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
+                }
+            }
+
+            try {
+                const res = await fetch('/api/photo/toggle-favourite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ galleryId: currentGalleryId, photo })
+                });
+                if (res.ok) {
+                    showToast("Favorito actualizado", "success");
+                } else {
+                    throw new Error("Failed to save favourite state");
+                }
+            } catch (e) {
+                // 3. Revertir en caso de error
+                updateFavouriteUI(itemElement, photo, isFav);
+                if (isFav) {
+                    apiData.favourites.push(srcPath);
+                    const favGallery = apiData.galleries.find(g => g.id === 'favourites');
+                    if (favGallery) {
+                        if (!favGallery.images) favGallery.images = [];
+                        favGallery.images.push(srcPath);
+                    }
+                } else {
+                    apiData.favourites = apiData.favourites.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
+                    const favGallery = apiData.galleries.find(g => g.id === 'favourites');
+                    if (favGallery && favGallery.images) {
+                        favGallery.images = favGallery.images.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
+                    }
+                }
+                showToast("Error al actualizar favorito", "error");
+            }
+        }
+
+        function updateFavouriteUI(itemElement, photo, isFav) {
+            // Actualiza botón de corazón
+            const favBtn = itemElement.querySelector('.fav-btn');
+            if (favBtn) {
+                favBtn.classList.toggle('fav-active', isFav);
+                const svg = favBtn.querySelector('svg');
+                if (svg) {
+                    svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+                }
+            }
+            // Actualiza badge visible (sólo si no estamos en favoritos, lo cual ya se valida al llamar toggle)
+            if (currentGalleryId !== 'favourites') {
+                let badge = itemElement.querySelector('.badge-fav');
+                if (isFav && !badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'badge-fav';
+                    badge.textContent = '❤';
+                    itemElement.prepend(badge);
+                } else if (!isFav && badge) {
+                    badge.remove();
+                }
+            }
+        }
+
+        async function setCover(photo) {
+            showLoader("Estableciendo portada...");
+            try {
+                const res = await fetch('/api/gallery/set-cover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ galleryId: currentGalleryId, photo })
+                });
+                if (res.ok) {
+                    await init(true);
+                    loadGallery(currentGalleryId);
+                    showToast("Portada actualizada", "success");
+                }
+            } catch (e) {
+                showToast("Error al establecer portada", "error");
+            }
+            hideLoader();
+        }
+
+        function showLoader(text) {
+            document.getElementById('loader-text').innerText = text;
+            document.getElementById('loader').classList.add('active');
+        }
+        function hideLoader() {
+            document.getElementById('loader').classList.remove('active');
+        }
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

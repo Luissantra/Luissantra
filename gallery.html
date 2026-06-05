@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
   <meta name="description" content="Explore specific photography and in-game photo galleries in high resolution.">
   <title>Gallery — Photography Portfolio</title>
   
@@ -40,8 +42,8 @@
 
   <!-- Native HTML Dialog for the Lightbox -->
   <dialog id="lightbox" closedby="any">
-    <div class="lightbox-content">
-      <button class="lightbox-btn lightbox-close" id="lightbox-close" aria-label="Close Lightbox" formmethod="dialog">
+    <div class="lightbox-content" tabindex="-1">
+      <button class="lightbox-btn lightbox-close" id="lightbox-close" aria-label="Close Lightbox">
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
       

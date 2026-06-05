@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Reorder Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #121212; color: #eee; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        #sidebar { width: 250px; background-color: #1e1e1e; padding: 20px; overflow-y: auto; border-right: 1px solid #333; display: flex; flex-direction: column; }
+        #main { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
+        h1, h2 { margin-top: 0; font-weight: 500; }
+        p { color: #aaa; }
+        button { background-color: #333; color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-bottom: 10px; width: 100%; text-align: left; transition: background 0.2s; }
+        button:hover { background-color: #444; }
+        button.primary { background-color: #28a745; border-color: #28a745; text-align: center; font-weight: bold; margin-top: auto; margin-bottom: 0; }
+        button.primary:hover { background-color: #218838; border-color: #218838; }
+        button.gallery-btn.active { background-color: #007bff; border-color: #007bff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .grid-item { background-color: #2d2d2d; border-radius: 8px; overflow: hidden; cursor: grab; position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; }
+        .grid-item:active { cursor: grabbing; }
+        .grid-item:hover { border-color: #007bff; }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .grid-item .filename { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; font-size: 11px; padding: 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; }
+        #setup { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; width: 100%; }
+        #setup button { width: auto; font-size: 16px; padding: 12px 24px; text-align: center; background-color: #007bff; border-color: #007bff; }
+        #setup button:hover { background-color: #0056b3; border-color: #0056b3; }
+        .hidden { display: none !important; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #28a745; color: white; padding: 12px 24px; border-radius: 5px; opacity: 0; transition: opacity 0.3s; pointer-events: none; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; }
+        .toast.show { opacity: 1; }
+        .ghost { opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <div id="setup">
+        <h1>Photo Reorder Tool</h1>
+        <p>This tool requires access to your <b>data</b> folder to save changes.</p>
+        <button onclick="init()">Select 'data' folder</button>
+    </div>
+
+    <div id="sidebar" class="hidden">
+        <h2>Galleries</h2>
+        <div id="gallery-list"></div>
+        <button class="primary" onclick="saveChanges()">Save Changes</button>
+    </div>
+
+    <div id="main" class="hidden">
+        <h2 id="current-gallery-title">Select a gallery</h2>
+        <p style="margin-top: 0;">Drag and drop the images to reorder them.</p>
+        <div class="grid" id="sortable-grid"></div>
+    </div>
+
+    <div id="toast" class="toast">Changes saved successfully!</div>
+
+    <script>
+        let directoryHandle;
+        let galleriesFileHandle;
+        let favouritesFileHandle;
+        let galleriesData = [];
+        let favouritesData = [];
+        let currentGalleryId = null;
+        let sortableInstance = null;
+
+        async function init() {
+            try {
+                // Show directory picker to the user
+                directoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                
+                // Get galleries.json
+                galleriesFileHandle = await directoryHandle.getFileHandle('galleries.json');
+                const file = await galleriesFileHandle.getFile();
+                const text = await file.text();
+                galleriesData = JSON.parse(text);
+
+                // Get favourites.json
+                try {
+                    favouritesFileHandle = await directoryHandle.getFileHandle('favourites.json');
+                    const favFile = await favouritesFileHandle.getFile();
+                    const favText = await favFile.text();
+                    favouritesData = JSON.parse(favText);
+                } catch (e) {
+                    console.log("No favourites.json found");
+                }
+
+                document.getElementById('setup').classList.add('hidden');
+                document.getElementById('sidebar').classList.remove('hidden');
+                document.getElementById('main').classList.remove('hidden');
+                
+                renderSidebar();
+                
+                // Load first gallery by default if exists
+                if (galleriesData.length > 0) {
+                    loadGallery(galleriesData[0].id, document.querySelector('.gallery-btn'));
+                }
+
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    alert("Error loading folder. Make sure you select the 'data' folder inside your project.");
+                    console.error(error);
+                }
+            }
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('gallery-list');
+            list.innerHTML = '';
+            galleriesData.forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = 'gallery-btn';
+                btn.innerText = g.title;
+                btn.onclick = (e) => loadGallery(g.id, e.target);
+                list.appendChild(btn);
+            });
+        }
+
+        function loadGallery(id, buttonElement) {
+            document.querySelectorAll('.gallery-btn').forEach(btn => btn.classList.remove('active'));
+            if (buttonElement) buttonElement.classList.add('active');
+
+            currentGalleryId = id;
+            const gallery = galleriesData.find(g => g.id === id);
+            document.getElementById('current-gallery-title').innerText = gallery.title;
+            
+            const grid = document.getElementById('sortable-grid');
+            grid.innerHTML = '';
+            
+            gallery.images.forEach(img => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.dataset.img = img;
+                
+                // Build the image path relative to tools/reorder.html
+                // If it's favourites, the path is like 'japan/japan-01.webp'
+                // If it's a specific gallery, it's just 'japan-01.webp' so we add the folder prefix.
+                let imgSrc = `../images/${id === 'favourites' ? img : gallery.id + '/' + img}`;
+
+                item.innerHTML = `
+                    <img src="${imgSrc}" loading="lazy">
+                    <div class="filename">${img.split('/').pop()}</div>
+                `;
+                grid.appendChild(item);
+            });
+
+            if (sortableInstance) sortableInstance.destroy();
+            
+            sortableInstance = new Sortable(grid, {
+                animation: 150,
+                ghostClass: 'ghost',
+                onEnd: function () {
+                    // Update the array when drag ends
+                    const newOrder = Array.from(grid.children).map(child => child.dataset.img);
+                    gallery.images = newOrder;
+                    
+                    if (id === 'favourites') {
+                        favouritesData = newOrder;
+                    }
+                }
+            });
+        }
+
+        async function saveChanges() {
+            try {
+                // Save galleries.json
+                const writableGalleries = await galleriesFileHandle.createWritable();
+                await writableGalleries.write(JSON.stringify(galleriesData, null, 2));
+                await writableGalleries.close();
+
+                // Save favourites.json if exists
+                if (favouritesFileHandle) {
+                    const writableFavs = await favouritesFileHandle.createWritable();
+                    await writableFavs.write(JSON.stringify(favouritesData, null, 2));
+                    await writableFavs.close();
+                }
+
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            } catch (error) {
+                alert("Error saving changes. See console for details.");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

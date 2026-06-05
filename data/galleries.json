@@ -46,13 +46,22 @@
         "src": "japan/japan-62.webp"
       },
       {
+        "src": "japan/japan-87.webp"
+      },
+      {
         "src": "japan/japan-30.webp"
+      },
+      {
+        "src": "japan/japan-74.webp"
       },
       {
         "src": "japan/japan-37.webp"
       },
       {
         "src": "japan/japan-51.webp"
+      },
+      {
+        "src": "spider-man-miles-morales/spider-man-miles-morales-08.webp"
       },
       {
         "src": "japan/japan-53.webp"
@@ -67,7 +76,13 @@
         "src": "japan/japan-35.webp"
       },
       {
+        "src": "japan/japan-72.webp"
+      },
+      {
         "src": "japan/japan-64.webp"
+      },
+      {
+        "src": "japan/japan-67.webp"
       },
       {
         "src": "japan/japan-65.webp"
@@ -76,25 +91,13 @@
         "src": "japan/japan-66.webp"
       },
       {
-        "src": "japan/japan-67.webp"
-      },
-      {
         "src": "japan/japan-68.webp"
-      },
-      {
-        "src": "japan/japan-72.webp"
-      },
-      {
-        "src": "japan/japan-74.webp"
       },
       {
         "src": "japan/japan-84.webp"
       },
       {
         "src": "japan/japan-85.webp"
-      },
-      {
-        "src": "japan/japan-87.webp"
       },
       {
         "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp"
@@ -142,9 +145,6 @@
         "src": "spider-man-miles-morales/spider-man-miles-morales-07.webp"
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-08.webp"
-      },
-      {
         "src": "spider-man-miles-morales/spider-man-miles-morales-25.webp"
       },
       {
@@ -160,16 +160,19 @@
         "src": "the-last-of-us-2/the-last-of-us-2-02.webp"
       },
       {
-        "src": "the-last-of-us-2/the-last-of-us-2-03.webp"
+        "src": "the-last-of-us-2/the-last-of-us-2-caratula.webp"
       },
       {
-        "src": "the-last-of-us-2/the-last-of-us-2-caratula.webp"
+        "src": "spider-man-miles-morales/spider-man-miles-morales-26.webp"
       },
       {
         "src": "the-last-guardian/the-last-guardian-caratula.webp"
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-26.webp"
+        "src": "red-dead-redemption-2/red-dead-redemption-2-13.webp"
+      },
+      {
+        "src": "the-last-of-us-2/the-last-of-us-2-03.webp"
       }
     ]
   },
@@ -513,12 +516,12 @@
     "title": "The Last Of Us 2",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/the-last-of-us-2/the-last-of-us-2-caratula.webp",
+    "coverImage": "images/the-last-of-us-2/the-last-of-us-2-02.webp",
     "images": [
+      "the-last-of-us-2-02.webp",
       "the-last-of-us-2-caratula.webp",
       "the-last-of-us-2-03.webp",
       "the-last-of-us-2-01.webp",
-      "the-last-of-us-2-02.webp",
       "the-last-of-us-2-04.webp",
       "the-last-of-us-2-05.webp",
       "the-last-of-us-2-06.webp",

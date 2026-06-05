@@ -2,6 +2,7 @@
    CSS Custom Properties (Design System)
    ========================================================================== */
 :root {
+  color-scheme: light;
   /* Colors - Light Theme (Default) */
   --color-bg: #ffffff;
   --color-bg-rgb: 255, 255, 255;
@@ -38,6 +39,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   /* Colors - Dark Theme */
   --color-bg: #0a0a0a;
   --color-bg-rgb: 10, 10, 10;
@@ -63,6 +65,7 @@ html, body {
 }
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Compensate for sticky header on all anchor targets */
 }
 
 body {
@@ -70,7 +73,7 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition: background-color var(--transition-slow), color var(--transition-slow);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -160,11 +163,61 @@ button {
   background-color: var(--color-surface-hover);
 }
 
-.theme-toggle svg {
+.theme-toggle > svg {
+  width: 20px;
+  height: 20px;
+}
+
+#theme-toggle svg {
+  fill: currentColor;
+}
+
+/* Theme icon container: always centered */
+#theme-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+#theme-icon-container svg {
   width: 20px;
   height: 20px;
   fill: currentColor;
 }
+
+/* Sun ↔ Moon transition animations */
+@keyframes theme-icon-exit {
+  from {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+  }
+}
+
+@keyframes theme-icon-enter {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+#theme-icon-container.is-exiting {
+  animation: theme-icon-exit 150ms ease-in forwards;
+}
+
+#theme-icon-container.is-entering {
+  animation: theme-icon-enter 150ms ease-out forwards;
+}
+
 
 /* ==========================================================================
    Hero Section
@@ -419,6 +472,7 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 10px;
+  grid-auto-flow: dense;
   gap: calc(var(--space-sm) * 2 / 3);
   padding: 0;
   align-items: start;
@@ -506,7 +560,8 @@ button {
 
 .mosaic-grid .photo-item img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
@@ -573,6 +628,27 @@ button {
   width: 100%;
 }
 
+/* Subtle hover overlay for clickability feedback */
+.photo-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+}
+
+.photo-item:hover::after {
+  opacity: 1;
+}
+
 .photos-grid .photo-item {
   max-width: 1200px; /* Constrain max width for ultra-wide screens */
 }
@@ -600,6 +676,9 @@ button {
 .photo-item.is-loaded img {
   opacity: 1;
 }
+.photo-item.is-loaded {
+  background-color: transparent;
+}
 
 /* ==========================================================================
    Lightbox
@@ -612,12 +691,44 @@ button {
   height: 100vh;
   max-width: 100vw;
   max-height: 100vh;
+  /* Dialog open animation */
+  transition: opacity var(--transition-base), transform var(--transition-base), display var(--transition-base) allow-discrete, overlay var(--transition-base) allow-discrete;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* @starting-style: initial state before dialog opens (enter animation) */
+@supports (selector(:open)) {
+  @starting-style {
+    #lightbox:open {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  /* Closed state for exit animation */
+  #lightbox:not(:open) {
+    opacity: 0;
+    transform: scale(0.97);
+    pointer-events: none;
+  }
 }
 
 #lightbox::backdrop {
   background-color: var(--color-overlay);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  /* Backdrop fade in */
+  transition: opacity var(--transition-base), display var(--transition-base) allow-discrete, overlay var(--transition-base) allow-discrete;
+  opacity: 1;
+}
+
+@supports (selector(:open)) {
+  @starting-style {
+    #lightbox:open::backdrop {
+      opacity: 0;
+    }
+  }
 }
 
 .lightbox-content {
@@ -627,6 +738,10 @@ button {
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+.lightbox-content:focus {
+  outline: none;
 }
 
 .lightbox-image {
@@ -684,6 +799,17 @@ button {
   transform: none;
 }
 
+/* Hide outline for mouse click focus on all lightbox buttons */
+.lightbox-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Explicit high-contrast focus ring for keyboard navigation */
+.lightbox-btn:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
 /* ==========================================================================
    Utilities & Animations
    ========================================================================== */
@@ -727,4 +853,46 @@ button {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Scroll-Driven Reveal Animations
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes scroll-reveal-item {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes scroll-reveal-title {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    html.scroll-animations-enabled .gallery-card,
+    html.scroll-animations-enabled .photo-item {
+      animation: scroll-reveal-item auto linear both;
+      animation-timeline: view();
+      animation-range: entry;
+    }
+
+    html.scroll-animations-enabled .section-title {
+      animation: scroll-reveal-title auto linear both;
+      animation-timeline: view();
+      animation-range: entry;
+    }
+  }
 }
