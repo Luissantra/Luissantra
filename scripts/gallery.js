@@ -97,11 +97,13 @@ function resizeAllGridItems(container) {
   const gapStr = window.getComputedStyle(grid).getPropertyValue('row-gap');
   const rowGap = parseInt(gapStr) || 0;
   
-  let columnsCount = 3;
+  let columnsCount = 4;
   if (window.innerWidth <= 600) {
     columnsCount = 1;
   } else if (window.innerWidth <= 1024) {
     columnsCount = 2;
+  } else if (window.innerWidth <= 1440) {
+    columnsCount = 3;
   }
   const gridClientWidth = grid.clientWidth;
   const parentClientWidth = grid.parentElement ? grid.parentElement.clientWidth : 0;
@@ -161,7 +163,7 @@ function resizeAllGridItems(container) {
   items.forEach((item, i) => {
     const { calculatedHeight } = measurements[i];
     if (calculatedHeight > 0) {
-      const rowSpan = Math.ceil((calculatedHeight + rowGap) / (rowHeight + rowGap)) + 1;
+      const rowSpan = Math.ceil((calculatedHeight + rowGap) / (rowHeight + rowGap));
       item.style.gridRowEnd = `span ${rowSpan}`;
       item.style.containIntrinsicSize = 'auto none auto ' + Math.round(calculatedHeight) + 'px';
     }
@@ -207,7 +209,7 @@ function renderFavouritesGallery(galleries, container) {
       <div style="margin-top: 1.5rem;">
         <button id="toggle-mosaic-mode" class="nav-link layout-toggle-btn" aria-pressed="false">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-          Show Classic 3-Column
+          Show Classic Grid
         </button>
       </div>
     </div>
@@ -354,7 +356,7 @@ function renderFavouritesGallery(galleries, container) {
             item.style.gridRowEnd = '';
           });
         } else {
-          toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Show Classic 3-Column';
+          toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Show Classic Grid';
           resizeAllGridItems(container);
         }
       }
