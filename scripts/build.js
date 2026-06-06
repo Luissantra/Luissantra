@@ -6,6 +6,39 @@ const IMAGES_DIR = path.join(__dirname, '../images');
 const ORIGINALS_DIR = path.join(__dirname, '../originals');
 const DATA_DIR = path.join(__dirname, '../data');
 
+// Promise concurrency limiter
+function limitConcurrency(concurrency) {
+  let activeCount = 0;
+  const queue = [];
+  const next = () => {
+    activeCount--;
+    if (queue.length > 0) {
+      const { task, resolve, reject } = queue.shift();
+      runTask(task, resolve, reject);
+    }
+  };
+  const runTask = async (task, resolve, reject) => {
+    activeCount++;
+    try {
+      const result = await task();
+      resolve(result);
+    } catch (err) {
+      reject(err);
+    } finally {
+      next();
+    }
+  };
+  return (task) => {
+    return new Promise((resolve, reject) => {
+      if (activeCount < concurrency) {
+        runTask(task, resolve, reject);
+      } else {
+        queue.push({ task, resolve, reject });
+      }
+    });
+  };
+}
+
 // Helper to capitalize titles nicely
 function formatTitle(folderName) {
   return folderName
@@ -39,8 +72,13 @@ async function build() {
   let existingGalleries = [];
   try {
     const jsonPath = path.join(DATA_DIR, 'galleries.json');
-    existingGalleries = JSON.parse(await fs.readFile(jsonPath, 'utf-8'));
-  } catch (err) { }
+    const content = await fs.readFile(jsonPath, 'utf-8');
+    existingGalleries = JSON.parse(content);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.warn('Warning: Could not parse galleries.json. Proceeding with empty state.', err.message);
+    }
+  }
 
   const galleries = [];
   const folders = await fs.readdir(IMAGES_DIR);
@@ -70,8 +108,10 @@ async function build() {
 
     const processedImages = [];
     let coverImage = '';
+    
+    const limit = limitConcurrency(10); // Process 10 images concurrently
 
-    for (const file of imageFiles) {
+    const tasks = imageFiles.map(file => limit(async () => {
       const filePath = path.join(folderPath, file);
       const fileExt = path.extname(file);
       const baseName = path.basename(file, fileExt);
@@ -82,11 +122,7 @@ async function build() {
       const originalBackupPath = path.join(originalGalleryDir, file);
 
       if (fileExt.toLowerCase() === '.webp') {
-        processedImages.push(largeWebpName);
-        if (!coverImage) {
-          coverImage = `images/${folder}/${largeWebpName}`;
-        }
-        continue;
+        return { success: true, file, largeWebpName };
       }
 
       try {
@@ -100,15 +136,21 @@ async function build() {
         // Move original to backup folder
         await fs.rename(filePath, originalBackupPath);
 
-        processedImages.push(largeWebpName);
-
-        // Set the first image as cover image
-        if (!coverImage) {
-          coverImage = `images/${folder}/${largeWebpName}`;
-        }
-        
+        return { success: true, file, largeWebpName };
       } catch (err) {
         console.error(`  Error processing ${file}:`, err);
+        return { success: false, file };
+      }
+    }));
+
+    const results = await Promise.all(tasks);
+    
+    for (const result of results) {
+      if (result.success) {
+        processedImages.push(result.largeWebpName);
+        if (!coverImage) {
+          coverImage = `images/${folder}/${result.largeWebpName}`;
+        }
       }
     }
 
@@ -152,7 +194,8 @@ async function build() {
   // Add favourites gallery from data/favourites.json if exists
   try {
     const favPath = path.join(DATA_DIR, 'favourites.json');
-    const favDataRaw = JSON.parse(await fs.readFile(favPath, 'utf-8'));
+    const favContent = await fs.readFile(favPath, 'utf-8');
+    const favDataRaw = JSON.parse(favContent);
     
     // Normalize to objects for internal use
     const favData = favDataRaw.map(f => typeof f === 'string' ? { src: f } : f);
@@ -171,7 +214,11 @@ async function build() {
     });
     console.log(`Added favourites gallery with ${favData.length} images`);
   } catch (err) {
-    console.log('No data/favourites.json found or error reading it:', err.message);
+    if (err.code !== 'ENOENT') {
+      console.warn('Warning: Could not parse favourites.json. Proceeding without favourites.', err.message);
+    } else {
+      console.log('No data/favourites.json found, skipping favourites gallery.');
+    }
   }
 
   // Write the JSON data file

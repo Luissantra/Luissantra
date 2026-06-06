@@ -4,6 +4,20 @@ const path = require('path');
 const fs = require('fs/promises');
 const { spawn } = require('child_process');
 
+class AsyncQueue {
+  constructor() {
+    this.promise = Promise.resolve();
+  }
+  enqueue(task) {
+    return new Promise((resolve, reject) => {
+      this.promise = this.promise.then(() => {
+        return task().then(resolve).catch(reject);
+      });
+    });
+  }
+}
+const dbQueue = new AsyncQueue();
+
 const app = express();
 const port = 3030;
 
@@ -53,18 +67,20 @@ app.get('/api/data', async (req, res) => {
 
 // 2. Save order and data
 app.post('/api/save', async (req, res) => {
-    try {
-        const { galleries, favourites } = req.body;
-        if (galleries) {
-            await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleries, null, 2));
+    dbQueue.enqueue(async () => {
+        try {
+            const { galleries, favourites } = req.body;
+            if (galleries) {
+                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleries, null, 2));
+            }
+            if (favourites) {
+                await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favourites, null, 2));
+            }
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
-        if (favourites) {
-            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favourites, null, 2));
-        }
-        res.json({ success: true });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+    });
 });
 
 // 3. Upload photos
@@ -87,128 +103,136 @@ app.post('/api/gallery/new', async (req, res) => {
 
 // 6. Delete photo
 app.post('/api/photo/delete', async (req, res) => {
-    try {
-        const { galleryId, photo } = req.body;
-        if (!galleryId || !photo) throw new Error("Missing parameters");
+    dbQueue.enqueue(async () => {
+        try {
+            const { galleryId, photo } = req.body;
+            if (!galleryId || !photo) throw new Error("Missing parameters");
 
-        let favouritesData = [];
-        try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
-        
-        let galleriesData = [];
-        try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
+            let favouritesData = [];
+            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+            
+            let galleriesData = [];
+            try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
 
-        if (galleryId === 'favourites') {
-            favouritesData = favouritesData.filter(f => {
-                const src = typeof f === 'string' ? f : f.src;
-                return src !== photo;
-            });
-            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
-            
-            const favGallery = galleriesData.find(g => g.id === 'favourites');
-            if (favGallery) {
-                favGallery.images = favGallery.images.filter(img => img !== photo);
-                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
-            }
-        } else {
-            const filePath = path.join(__dirname, 'images', galleryId, photo);
-            try { await fs.unlink(filePath); } catch(e) { console.log("File not found to delete:", filePath); }
-            
-            const gallery = galleriesData.find(g => g.id === galleryId);
-            if (gallery) {
-                gallery.images = gallery.images.filter(img => img !== photo);
-                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
-            }
-            
-            const srcPath = `${galleryId}/${photo}`;
-            let removedFromFavs = false;
-            favouritesData = favouritesData.filter(f => {
-                const src = typeof f === 'string' ? f : f.src;
-                if (src === srcPath) { removedFromFavs = true; return false; }
-                return true;
-            });
-            if (removedFromFavs) {
+            if (galleryId === 'favourites') {
+                favouritesData = favouritesData.filter(f => {
+                    const src = typeof f === 'string' ? f : f.src;
+                    return src !== photo;
+                });
                 await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+                
+                const favGallery = galleriesData.find(g => g.id === 'favourites');
+                if (favGallery) {
+                    favGallery.images = favGallery.images.filter(img => img !== photo);
+                    await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+                }
+            } else {
+                const filePath = path.join(__dirname, 'images', galleryId, photo);
+                try { await fs.unlink(filePath); } catch(e) { console.log("File not found to delete:", filePath); }
+                
+                const gallery = galleriesData.find(g => g.id === galleryId);
+                if (gallery) {
+                    gallery.images = gallery.images.filter(img => img !== photo);
+                    await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+                }
+                
+                const srcPath = `${galleryId}/${photo}`;
+                let removedFromFavs = false;
+                favouritesData = favouritesData.filter(f => {
+                    const src = typeof f === 'string' ? f : f.src;
+                    if (src === srcPath) { removedFromFavs = true; return false; }
+                    return true;
+                });
+                if (removedFromFavs) {
+                    await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+                }
             }
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
-        res.json({ success: true });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+    });
 });
 
 // 7. Toggle favourite
 app.post('/api/photo/toggle-favourite', async (req, res) => {
-    try {
-        const { galleryId, photo } = req.body;
-        if (!galleryId || !photo || galleryId === 'favourites') throw new Error("Invalid parameters");
-        
-        const srcPath = `${galleryId}/${photo}`;
-        let favouritesData = [];
-        try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
-        
-        const isFav = favouritesData.some(f => (typeof f === 'string' ? f : f.src) === srcPath);
-        if (isFav) {
-            favouritesData = favouritesData.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
-        } else {
-            favouritesData.push(srcPath);
+    dbQueue.enqueue(async () => {
+        try {
+            const { galleryId, photo } = req.body;
+            if (!galleryId || !photo || galleryId === 'favourites') throw new Error("Invalid parameters");
+            
+            const srcPath = `${galleryId}/${photo}`;
+            let favouritesData = [];
+            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+            
+            const isFav = favouritesData.some(f => (typeof f === 'string' ? f : f.src) === srcPath);
+            if (isFav) {
+                favouritesData = favouritesData.filter(f => (typeof f === 'string' ? f : f.src) !== srcPath);
+            } else {
+                favouritesData.push(srcPath);
+            }
+            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+            
+            res.json({ success: true, isFavourite: !isFav });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
-        await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
-        
-        res.json({ success: true, isFavourite: !isFav });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+    });
 });
 
 // 9. Toggle featured
 app.post('/api/photo/toggle-featured', async (req, res) => {
-    try {
-        const { photo } = req.body;
-        if (!photo) throw new Error("Missing photo parameter");
-        
-        let favouritesData = [];
-        try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
-        
-        // Normalize all entries to objects
-        favouritesData = favouritesData.map(f => typeof f === 'string' ? { src: f } : f);
-        
-        const entry = favouritesData.find(f => f.src === photo);
-        if (!entry) {
-            return res.status(404).json({ error: "Photo not found in favourites" });
+    dbQueue.enqueue(async () => {
+        try {
+            const { photo } = req.body;
+            if (!photo) throw new Error("Missing photo parameter");
+            
+            let favouritesData = [];
+            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+            
+            // Normalize all entries to objects
+            favouritesData = favouritesData.map(f => typeof f === 'string' ? { src: f } : f);
+            
+            const entry = favouritesData.find(f => f.src === photo);
+            if (!entry) {
+                return res.status(404).json({ error: "Photo not found in favourites" });
+            }
+            
+            entry.featured = !entry.featured;
+            
+            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+            
+            res.json({ success: true, isFeatured: entry.featured });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
-        
-        entry.featured = !entry.featured;
-        
-        await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
-        
-        res.json({ success: true, isFeatured: entry.featured });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+    });
 });
 
 // 8. Set Cover
 app.post('/api/gallery/set-cover', async (req, res) => {
-    try {
-        const { galleryId, photo } = req.body;
-        if (!galleryId || !photo) throw new Error("Missing parameters");
-        
-        let galleriesData = [];
-        try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
-        
-        const gallery = galleriesData.find(g => g.id === galleryId);
-        if (gallery) {
-            if (galleryId === 'favourites') {
-                gallery.coverImage = `images/${photo}`;
-            } else {
-                gallery.coverImage = `images/${galleryId}/${photo}`;
+    dbQueue.enqueue(async () => {
+        try {
+            const { galleryId, photo } = req.body;
+            if (!galleryId || !photo) throw new Error("Missing parameters");
+            
+            let galleriesData = [];
+            try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
+            
+            const gallery = galleriesData.find(g => g.id === galleryId);
+            if (gallery) {
+                if (galleryId === 'favourites') {
+                    gallery.coverImage = `images/${photo}`;
+                } else {
+                    gallery.coverImage = `images/${galleryId}/${photo}`;
+                }
+                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
             }
-            await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
-        res.json({ success: true });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+    });
 });
 
 // 5. Execute Build Script

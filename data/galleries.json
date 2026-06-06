@@ -44,7 +44,8 @@
         "featured": true
       },
       {
-        "src": "japan/japan-29.webp"
+        "src": "japan/japan-29.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-62.webp"
@@ -66,7 +67,8 @@
         "src": "japan/japan-51.webp"
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-08.webp"
+        "src": "spider-man-miles-morales/spider-man-miles-morales-08.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-53.webp"
