@@ -78,7 +78,7 @@ Es una aplicación local con interfaz gráfica web para gestionar todo el portfo
 
 *   **Gestor de Archivos Fotográficos:**
     *   **Carga de Imágenes (Upload):** El panel incluye una zona de drag & drop y un buscador de archivos para subir múltiples fotos simultáneamente. La carga se gestiona mediante `multer` y organiza las fotos directamente en la carpeta del disco de la galería seleccionada.
-    *   **Eliminación Segura (Delete):** Borra permanentemente una imagen física del disco y, de manera inteligente, escanea las bases de datos de galerías y favoritos para eliminar cualquier referencia rota existente.
+    *   **Eliminación Segura (Delete):** Borra permanentemente una imagen física del disco y escanea las bases de datos para eliminar cualquier referencia rota existente. Toda operación destructiva está protegida por un **sistema de cola asíncrona** en el servidor para evitar corrupción de la base de datos JSON en caso de clicks rápidos/masivos.
     *   **Asignación de Portadas (Cover):** Un botón de icono de imagen permite marcar cualquier foto de la galería como la portada principal de la tarjeta de la Home. La foto actual de portada muestra un badge «Portada» en la esquina superior izquierda.
     *   **Gestor de Favoritos (Optimistic UI):** Un botón de corazón añade o elimina cualquier imagen del carrusel de destacados y de la galería de Favourites. La actualización de la UI es **inmediata** (optimista): el estado visual cambia al instante sin esperar la respuesta del servidor. Si el servidor devuelve un error, el estado se revierte automáticamente.
     *   **Indicador Visual de Favoritos:** Las imágenes que pertenecen a Favourites muestran un badge rojo (❤) en la esquina superior derecha de su tarjeta en el CMS, independientemente de en qué galería estén.
@@ -108,7 +108,7 @@ Es una aplicación local con interfaz gráfica web para gestionar todo el portfo
 ### D. Pipeline de Procesamiento de Imágenes (`scripts/build.js`)
 
 *   Es el motor de optimización que reduce el peso del portfolio. Se ejecuta mediante `npm run build` o a través del botón «Build» del CMS.
-*   **Optimización WebP:** Escanea los directorios de fotos y las convierte al formato optimizado WebP utilizando la librería de alto rendimiento `sharp`.
+*   **Optimización WebP (Ejecución Paralela):** Escanea los directorios de fotos y las convierte al formato optimizado WebP utilizando la librería de alto rendimiento `sharp`. Utiliza procesamiento paralelo concurrente, procesando lotes de imágenes a la vez en lugar de forma secuencial, para acelerar exponencialmente el tiempo de compilación general.
 *   **Generación de Miniaturas (Thumbnails):** Genera una copia a baja resolución de cada imagen con el prefijo `thumb_` (ej. `thumb_japon-01.webp`) destinada a la carga inicial del mosaico, acelerando la velocidad de carga de la página.
 *   **Respaldo de Originales:** Mueve las fotos pesadas de formato original (JPEG, PNG) a la carpeta externa `/originals/` para conservarlas como copia de seguridad sin saturar el peso final de la web estática que se subirá a producción.
 *   **Sincronización JSON:** Actualiza las listas de imágenes de cada galería dentro de `data/galleries.json` en base a lo que realmente se encuentra en los subdirectorios del disco.

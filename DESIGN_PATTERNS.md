@@ -33,6 +33,7 @@ El proyecto es una aplicación frontend **vanilla** (sin frameworks pesados como
 *   **Patrón de Inicialización (Init Pattern):** El código está estructurado en funciones de inicialización discretas (`initTheme`, `initScrollAnimations`, `initHeaderScroll`, `initHomePage`, `initGalleryPage`, `initLightbox`). Dos *event listeners* `DOMContentLoaded` se encargan de llamar a las funciones correspondientes según la ruta actual.
 *   **Módulo IIFE para GalleryManager:** Toda la lógica de la página de galería (incluyendo el lightbox, el mosaico y la navegación de imágenes) está encapsulada en un módulo IIFE (`GalleryManager`), que expone únicamente el método `initGalleryPage` como API pública. Esto previene la contaminación del espacio global de nombres.
 *   **Programación Asíncrona:** Uso de `async` / `await` junto con la API `fetch` para la carga de datos no bloqueante, incluyendo un manejo robusto de errores (`try...catch`).
+*   **Limpieza y Modularidad de Archivos:** Se emplean exclusivamente archivos con extensión `.js` referenciados como módulos en el HTML (`<script type="module">`), habiéndose eliminado por completo la duplicidad de archivos con extensiones redundantes (`.mjs`) para reducir el ruido.
 *   **Generación de UI con Template Literals:** El HTML dinámico se construye inyectando variables directamente en cadenas de texto multilínea (Template Literals) y luego asignándolas vía `innerHTML`.
 *   **Prevención de Pérdidas de Memoria (Memory Leaks):**
     *   Al cambiar entre vistas o inicializar componentes cíclicos, se lleva un registro estricto del identificador de intervalos (`carouselIntervalId`). Este se cancela mediante `clearInterval` antes de iniciar una nueva instancia del carrusel de favoritos, evitando la acumulación de procesos en segundo plano.
@@ -79,6 +80,7 @@ Servidor local en Node.js (Express) para gestionar el portfolio visualmente. Se 
 *   **API REST:** Rutas para leer/guardar configuraciones en `galleries.json` y `favourites.json`, cargar imágenes en caliente, eliminar archivos físicos del disco y configurar portadas de galerías.
 *   **Procesamiento de Archivos:** Implementa `multer` para la carga segura y organizada de imágenes directamente a la carpeta de la galería seleccionada.
 *   **Reordenación Drag & Drop (SortableJS):** Tanto las galerías en la barra lateral como las imágenes dentro de cada galería son reordenables mediante drag & drop con SortableJS. La galería de Favourites está bloqueada de ser reordenada en la barra lateral. Al soltar, el orden se guarda asíncronamente en los archivos JSON.
+*   **Integridad de Datos (AsyncQueue / Mutex):** Todas las operaciones de escritura y modificación sobre los archivos JSON estáticos de base de datos están protegidas en el backend por una cola asíncrona. Esto garantiza que múltiples pulsaciones rápidas del usuario (ej. eliminar varias fotos o añadir muchos favoritos de golpe) no corrompan los archivos JSON por condiciones de carrera (race conditions).
 *   **Actualización Optimista de Favoritos:** Al pulsar el botón de corazón para añadir/quitar una imagen de favoritos, la UI se actualiza de forma inmediata (sin esperar la respuesta del servidor). Si la petición falla, se revierte el estado de la UI y del `apiData` local.
 *   **Indicador Visual de Favoritos:** Las imágenes que ya pertenecen a la galería de Favourites muestran un badge rojo con el icono ❤ en la esquina superior derecha de la tarjeta, independientemente de si están dentro de la galería de favoritos o en otra galería.
 *   **Disparador de Build:** Expone un endpoint `/api/build` que ejecuta el script `build.js` en un subproceso de Node (`child_process.spawn`) devolviendo el log de consola en tiempo real al navegador.
@@ -92,7 +94,7 @@ Una alternativa sin backend que aprovecha la API nativa de navegadores modernos 
 
 Script en Node.js que utiliza la librería de procesamiento de alto rendimiento `sharp` para:
 1.  Escanear las carpetas físicas dentro de `images/`.
-2.  Optimizar y comprimir imágenes originales al formato de última generación **WebP**.
+2.  Optimizar y comprimir imágenes originales al formato de última generación **WebP**. El proceso está altamente paralelizado mediante un limitador de concurrencia (`limitConcurrency`) y `Promise.all()`, lo que acelera masivamente el tiempo de compilación reduciendo cuellos de botella secuenciales.
 3.  Generar miniaturas de carga rápida prefijadas con `thumb_`.
 4.  Mover los originales a la carpeta `originals/` como respaldo para evitar inflar el tamaño de la web desplegada.
 5.  Actualizar y sincronizar automáticamente la base de datos estática `data/galleries.json`.
