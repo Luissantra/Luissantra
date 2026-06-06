@@ -160,6 +160,33 @@ app.post('/api/photo/toggle-favourite', async (req, res) => {
     }
 });
 
+// 9. Toggle featured
+app.post('/api/photo/toggle-featured', async (req, res) => {
+    try {
+        const { photo } = req.body;
+        if (!photo) throw new Error("Missing photo parameter");
+        
+        let favouritesData = [];
+        try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+        
+        // Normalize all entries to objects
+        favouritesData = favouritesData.map(f => typeof f === 'string' ? { src: f } : f);
+        
+        const entry = favouritesData.find(f => f.src === photo);
+        if (!entry) {
+            return res.status(404).json({ error: "Photo not found in favourites" });
+        }
+        
+        entry.featured = !entry.featured;
+        
+        await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+        
+        res.json({ success: true, isFeatured: entry.featured });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // 8. Set Cover
 app.post('/api/gallery/set-cover', async (req, res) => {
     try {

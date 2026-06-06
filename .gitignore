@@ -7,5 +7,7 @@ node_modules/
 # Imágenes originales de alta resolución
 originals/
 
-# Configuración del agente de IA
+# Configuración y archivos de trabajo del agente de IA
 antigravity.md
+.agents/
+modern_web_guidance*.md

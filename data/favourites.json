@@ -1,58 +1,182 @@
 [
-  "japan/japan-13.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-29.webp",
-  "italy/italy-06.webp",
-  "japan/japan-21.webp",
-  "new-york/new-york-23.webp",
-  "italy/italy-07.webp",
-  "italy/italy-18.webp",
-  "italy/italy-20.webp",
-  "japan/japan-12.webp",
-  "ghost-of-tsushima/ghost-of-tsushima-01.webp",
-  "japan/japan-20.webp",
-  "japan/japan-29.webp",
-  "japan/japan-62.webp",
-  "japan/japan-87.webp",
-  "japan/japan-30.webp",
-  "japan/japan-74.webp",
-  "japan/japan-37.webp",
-  "japan/japan-51.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-08.webp",
-  "japan/japan-53.webp",
-  "japan/japan-59.webp",
-  "japan/japan-63.webp",
-  "japan/japan-35.webp",
-  "japan/japan-72.webp",
-  "japan/japan-64.webp",
-  "japan/japan-67.webp",
-  "japan/japan-65.webp",
-  "japan/japan-66.webp",
-  "japan/japan-68.webp",
-  "japan/japan-84.webp",
-  "japan/japan-85.webp",
-  "red-dead-redemption-2/red-dead-redemption-2-caratula.webp",
-  "japan/japan-89.webp",
-  "japan/japan-caratula.webp",
-  "new-york/new-york-01.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-01.webp",
-  "new-york/new-york-02.webp",
-  "new-york/new-york-08.webp",
-  "italy/italy-caratula.webp",
-  "new-york/new-york-25.webp",
-  "the-last-guardian/the-last-guardian-05.webp",
-  "ratchet-clank-rift-apart/ratchet-clank-rift-apart-02.webp",
-  "red-dead-redemption-2/red-dead-redemption-2-04.webp",
-  "red-dead-redemption-2/red-dead-redemption-2-11.webp",
-  "red-dead-redemption-2/red-dead-redemption-2-12.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-07.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-25.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-caratula.webp",
-  "the-last-guardian/the-last-guardian-01.webp",
-  "ratchet-clank-rift-apart/ratchet-clank-rift-apart-10.webp",
-  "the-last-of-us-2/the-last-of-us-2-02.webp",
-  "the-last-of-us-2/the-last-of-us-2-caratula.webp",
-  "spider-man-miles-morales/spider-man-miles-morales-26.webp",
-  "the-last-guardian/the-last-guardian-caratula.webp",
-  "red-dead-redemption-2/red-dead-redemption-2-13.webp",
-  "the-last-of-us-2/the-last-of-us-2-03.webp"
+  {
+    "src": "japan/japan-13.webp",
+    "featured": true
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-29.webp",
+    "featured": true
+  },
+  {
+    "src": "italy/italy-06.webp"
+  },
+  {
+    "src": "japan/japan-21.webp"
+  },
+  {
+    "src": "new-york/new-york-23.webp",
+    "featured": true
+  },
+  {
+    "src": "italy/italy-07.webp"
+  },
+  {
+    "src": "italy/italy-18.webp"
+  },
+  {
+    "src": "italy/italy-20.webp"
+  },
+  {
+    "src": "japan/japan-12.webp"
+  },
+  {
+    "src": "ghost-of-tsushima/ghost-of-tsushima-01.webp"
+  },
+  {
+    "src": "japan/japan-20.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-29.webp"
+  },
+  {
+    "src": "japan/japan-62.webp"
+  },
+  {
+    "src": "japan/japan-87.webp"
+  },
+  {
+    "src": "japan/japan-30.webp"
+  },
+  {
+    "src": "japan/japan-74.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-37.webp"
+  },
+  {
+    "src": "japan/japan-51.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-08.webp"
+  },
+  {
+    "src": "japan/japan-53.webp"
+  },
+  {
+    "src": "japan/japan-59.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-63.webp"
+  },
+  {
+    "src": "japan/japan-35.webp"
+  },
+  {
+    "src": "japan/japan-72.webp"
+  },
+  {
+    "src": "japan/japan-64.webp"
+  },
+  {
+    "src": "japan/japan-67.webp"
+  },
+  {
+    "src": "japan/japan-65.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-66.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-68.webp"
+  },
+  {
+    "src": "japan/japan-84.webp"
+  },
+  {
+    "src": "japan/japan-85.webp"
+  },
+  {
+    "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp",
+    "featured": true
+  },
+  {
+    "src": "japan/japan-89.webp"
+  },
+  {
+    "src": "japan/japan-caratula.webp",
+    "featured": true
+  },
+  {
+    "src": "new-york/new-york-01.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-01.webp"
+  },
+  {
+    "src": "new-york/new-york-02.webp"
+  },
+  {
+    "src": "new-york/new-york-08.webp"
+  },
+  {
+    "src": "italy/italy-caratula.webp"
+  },
+  {
+    "src": "new-york/new-york-25.webp",
+    "featured": true
+  },
+  {
+    "src": "the-last-guardian/the-last-guardian-05.webp"
+  },
+  {
+    "src": "ratchet-clank-rift-apart/ratchet-clank-rift-apart-02.webp"
+  },
+  {
+    "src": "red-dead-redemption-2/red-dead-redemption-2-04.webp",
+    "featured": true
+  },
+  {
+    "src": "red-dead-redemption-2/red-dead-redemption-2-11.webp"
+  },
+  {
+    "src": "red-dead-redemption-2/red-dead-redemption-2-12.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-07.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-25.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-caratula.webp"
+  },
+  {
+    "src": "the-last-guardian/the-last-guardian-01.webp"
+  },
+  {
+    "src": "ratchet-clank-rift-apart/ratchet-clank-rift-apart-10.webp"
+  },
+  {
+    "src": "the-last-of-us-2/the-last-of-us-2-02.webp"
+  },
+  {
+    "src": "the-last-of-us-2/the-last-of-us-2-caratula.webp"
+  },
+  {
+    "src": "spider-man-miles-morales/spider-man-miles-morales-26.webp"
+  },
+  {
+    "src": "the-last-guardian/the-last-guardian-caratula.webp"
+  },
+  {
+    "src": "red-dead-redemption-2/red-dead-redemption-2-13.webp"
+  },
+  {
+    "src": "the-last-of-us-2/the-last-of-us-2-03.webp"
+  }
 ]

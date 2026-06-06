@@ -7,10 +7,12 @@
     "coverImage": "images/japan/japan-caratula.webp",
     "images": [
       {
-        "src": "japan/japan-13.webp"
+        "src": "japan/japan-13.webp",
+        "featured": true
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-29.webp"
+        "src": "spider-man-miles-morales/spider-man-miles-morales-29.webp",
+        "featured": true
       },
       {
         "src": "italy/italy-06.webp"
@@ -19,7 +21,8 @@
         "src": "japan/japan-21.webp"
       },
       {
-        "src": "new-york/new-york-23.webp"
+        "src": "new-york/new-york-23.webp",
+        "featured": true
       },
       {
         "src": "italy/italy-07.webp"
@@ -37,7 +40,8 @@
         "src": "ghost-of-tsushima/ghost-of-tsushima-01.webp"
       },
       {
-        "src": "japan/japan-20.webp"
+        "src": "japan/japan-20.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-29.webp"
@@ -52,7 +56,8 @@
         "src": "japan/japan-30.webp"
       },
       {
-        "src": "japan/japan-74.webp"
+        "src": "japan/japan-74.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-37.webp"
@@ -67,7 +72,8 @@
         "src": "japan/japan-53.webp"
       },
       {
-        "src": "japan/japan-59.webp"
+        "src": "japan/japan-59.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-63.webp"
@@ -85,10 +91,12 @@
         "src": "japan/japan-67.webp"
       },
       {
-        "src": "japan/japan-65.webp"
+        "src": "japan/japan-65.webp",
+        "featured": true
       },
       {
-        "src": "japan/japan-66.webp"
+        "src": "japan/japan-66.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-68.webp"
@@ -100,13 +108,15 @@
         "src": "japan/japan-85.webp"
       },
       {
-        "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp"
+        "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-89.webp"
       },
       {
-        "src": "japan/japan-caratula.webp"
+        "src": "japan/japan-caratula.webp",
+        "featured": true
       },
       {
         "src": "new-york/new-york-01.webp"
@@ -124,7 +134,8 @@
         "src": "italy/italy-caratula.webp"
       },
       {
-        "src": "new-york/new-york-25.webp"
+        "src": "new-york/new-york-25.webp",
+        "featured": true
       },
       {
         "src": "the-last-guardian/the-last-guardian-05.webp"
@@ -133,7 +144,8 @@
         "src": "ratchet-clank-rift-apart/ratchet-clank-rift-apart-02.webp"
       },
       {
-        "src": "red-dead-redemption-2/red-dead-redemption-2-04.webp"
+        "src": "red-dead-redemption-2/red-dead-redemption-2-04.webp",
+        "featured": true
       },
       {
         "src": "red-dead-redemption-2/red-dead-redemption-2-11.webp"

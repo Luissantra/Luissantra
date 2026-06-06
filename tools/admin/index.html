@@ -53,6 +53,8 @@
         .grid-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .grid-item .badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; z-index: 10; }
         .grid-item .badge-fav { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.85); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; z-index: 10; }
+        .grid-item .badge-featured { position: absolute; top: 8px; right: 8px; background: rgba(250, 204, 21, 0.9); color: #1a1a1a; backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; z-index: 10; }
+        .grid-item .badge-fav + .badge-featured { top: 36px; }
         
         /* Actions overlay */
         .actions { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0; transition: opacity 0.2s; }
@@ -61,6 +63,7 @@
         .action-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
         .action-btn.active { color: #facc15; }
         .action-btn.fav-active { color: #ef4444; }
+        .action-btn.featured-active { color: #facc15; }
         .action-btn.delete:hover { background: rgba(239, 68, 68, 0.8); }
         .action-btn svg { width: 18px; height: 18px; }
         
@@ -269,14 +272,15 @@
             grid.innerHTML = '';
 
             let images = [];
+            let rawFavourites = [];
             if (id === 'favourites') {
-                images = Array.isArray(apiData.favourites) ? apiData.favourites : [];
-                images = images.map(i => typeof i === 'string' ? i : i.src);
+                rawFavourites = Array.isArray(apiData.favourites) ? apiData.favourites : [];
+                images = rawFavourites.map(i => typeof i === 'string' ? i : i.src);
             } else if (gallery) {
                 images = gallery.images || [];
             }
 
-            images.forEach(img => {
+            images.forEach((img, idx) => {
                 let imgSrc = id === 'favourites' ? `/images/${img}` : `/images/${id}/${img}`;
                 
                 const item = document.createElement('div');
@@ -298,13 +302,26 @@
                     favBadgeHtml = '<div class="badge-fav">❤</div>';
                 }
 
+                // Featured badge (only in favourites view)
+                let featuredBadgeHtml = '';
+                let isFeatured = false;
+                if (id === 'favourites') {
+                    const rawEntry = rawFavourites[idx];
+                    isFeatured = rawEntry && typeof rawEntry === 'object' && rawEntry.featured === true;
+                    if (isFeatured) {
+                        featuredBadgeHtml = '<div class="badge-featured">★ Destacada</div>';
+                    }
+                }
+
                 item.innerHTML = `
                     ${badgeHtml}
                     ${favBadgeHtml}
+                    ${featuredBadgeHtml}
                     <img src="${imgSrc}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' fill=\\'none\\' viewBox=\\'0 0 24 24\\' stroke=\\'%23666\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\\'/></svg>'">
                     <div class="actions">
                         ${id !== 'favourites' ? `<button class="action-btn ${isCover ? 'active' : ''}" onclick="setCover('${img}')" title="Marcar como portada"><svg fill="${isCover ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></button>` : ''}
                         ${id !== 'favourites' ? `<button class="action-btn fav-btn ${isFav ? 'fav-active' : ''}" onclick="toggleFavourite('${img}', this.closest('.grid-item'))" title="Añadir a favoritos"><svg fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>` : ''}
+                        ${id === 'favourites' ? `<button class="action-btn featured-btn ${isFeatured ? 'featured-active' : ''}" onclick="toggleFeatured('${img}', this.closest('.grid-item'))" title="Marcar como destacada"><svg fill="${isFeatured ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>` : ''}
                         <button class="action-btn delete" onclick="deletePhoto('${img}')" title="Eliminar"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                     </div>
                 `;
@@ -555,6 +572,69 @@
                 } else if (!isFav && badge) {
                     badge.remove();
                 }
+            }
+        }
+
+        async function toggleFeatured(photo, itemElement) {
+            // Optimistic UI update
+            const featuredBtn = itemElement.querySelector('.featured-btn');
+            let badge = itemElement.querySelector('.badge-featured');
+            const wasActive = featuredBtn && featuredBtn.classList.contains('featured-active');
+            const newState = !wasActive;
+
+            if (featuredBtn) {
+                featuredBtn.classList.toggle('featured-active', newState);
+                const svg = featuredBtn.querySelector('svg');
+                if (svg) svg.setAttribute('fill', newState ? 'currentColor' : 'none');
+            }
+            if (newState && !badge) {
+                badge = document.createElement('div');
+                badge.className = 'badge-featured';
+                badge.textContent = '★ Destacada';
+                itemElement.prepend(badge);
+            } else if (!newState && badge) {
+                badge.remove();
+            }
+
+            // Update local data
+            if (apiData.favourites) {
+                apiData.favourites = apiData.favourites.map(f => {
+                    const src = typeof f === 'string' ? f : f.src;
+                    if (src === photo) {
+                        return { src, featured: newState };
+                    }
+                    return typeof f === 'string' ? { src: f } : f;
+                });
+            }
+
+            try {
+                const res = await fetch('/api/photo/toggle-featured', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ photo })
+                });
+                if (res.ok) {
+                    showToast(newState ? "Marcada como destacada" : "Destacada quitada", "success");
+                } else {
+                    throw new Error("Failed");
+                }
+            } catch (e) {
+                // Revert on error
+                if (featuredBtn) {
+                    featuredBtn.classList.toggle('featured-active', wasActive);
+                    const svg = featuredBtn.querySelector('svg');
+                    if (svg) svg.setAttribute('fill', wasActive ? 'currentColor' : 'none');
+                }
+                badge = itemElement.querySelector('.badge-featured');
+                if (wasActive && !badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'badge-featured';
+                    badge.textContent = '★ Destacada';
+                    itemElement.prepend(badge);
+                } else if (!wasActive && badge) {
+                    badge.remove();
+                }
+                showToast("Error al actualizar destacada", "error");
             }
         }
 
