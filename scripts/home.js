@@ -34,8 +34,8 @@ export async function initHomePage() {
         <h2 class="section-title fade-in-up">Featured</h2>
         <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
           <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
-            <div class="gallery-card__image-wrapper">
-              <img id="fav-cover-img" class="gallery-card__image" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="transition: opacity 0.5s ease, transform var(--transition-slow);">
+            <div id="fav-wrapper" class="gallery-card__image-wrapper">
+              <img class="gallery-card__image fav-carousel-img" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="position: absolute; top: 0; left: 0; transition: opacity 0.5s ease, transform var(--transition-slow);">
             </div>
             <div class="gallery-card__info">
               <h3 class="gallery-card__title">Favourites</h3>
@@ -79,8 +79,8 @@ export async function initHomePage() {
 
     if (favImages.length > 1 && !prefersReducedMotion) {
       carouselIntervalId = setInterval(() => {
-        const imgEl = document.getElementById('fav-cover-img');
-        if (imgEl) {
+        const wrapper = document.getElementById('fav-wrapper');
+        if (wrapper) {
           let randomIndex;
           do {
             randomIndex = Math.floor(Math.random() * favImages.length);
@@ -91,29 +91,46 @@ export async function initHomePage() {
           const imgSrc = typeof randomImg === 'string' ? randomImg : randomImg.src;
           const newSrc = `images/${imgSrc}`;
           
-          imgEl.style.opacity = '0';
+          const newImg = document.createElement('img');
+          newImg.className = 'gallery-card__image fav-carousel-img';
+          newImg.src = newSrc;
+          newImg.alt = 'Favourites cover image';
+          newImg.loading = 'lazy';
+          newImg.width = 1200;
+          newImg.height = 500;
+          newImg.style.cssText = 'position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.5s ease, transform var(--transition-slow); z-index: 2;';
           
-          imgEl.addEventListener('transitionend', function handleTransitionEnd(e) {
-            if (e.propertyName === 'opacity') {
-              imgEl.removeEventListener('transitionend', handleTransitionEnd);
-              imgEl.src = newSrc;
-              
-              const handleLoad = () => {
-                imgEl.removeEventListener('load', handleLoad);
-                imgEl.removeEventListener('error', handleError);
-                imgEl.style.opacity = '1';
-              };
-              
-              const handleError = () => {
-                imgEl.removeEventListener('load', handleLoad);
-                imgEl.removeEventListener('error', handleError);
-                imgEl.style.opacity = '1';
-              };
-              
-              imgEl.addEventListener('load', handleLoad);
-              imgEl.addEventListener('error', handleError);
-            }
-          });
+          const oldImages = wrapper.querySelectorAll('.fav-carousel-img');
+          oldImages.forEach(img => img.style.zIndex = '1');
+          
+          const handleLoad = () => {
+            newImg.removeEventListener('load', handleLoad);
+            newImg.removeEventListener('error', handleError);
+            
+            // Trigger reflow to ensure transition runs
+            void newImg.offsetWidth;
+            newImg.style.opacity = '1';
+            
+            newImg.addEventListener('transitionend', function handleTransition(e) {
+              if (e.propertyName === 'opacity') {
+                newImg.removeEventListener('transitionend', handleTransition);
+                oldImages.forEach(img => {
+                  if (img !== newImg) img.remove();
+                });
+                newImg.style.zIndex = '1';
+              }
+            });
+          };
+          
+          const handleError = () => {
+            newImg.removeEventListener('load', handleLoad);
+            newImg.removeEventListener('error', handleError);
+            newImg.remove();
+          };
+          
+          newImg.addEventListener('load', handleLoad);
+          newImg.addEventListener('error', handleError);
+          wrapper.appendChild(newImg);
         }
       }, 5000);
     }

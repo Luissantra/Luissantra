@@ -118,6 +118,7 @@
   width: 100%;
   height: 100%;
   aspect-ratio: auto;
+  z-index: 0;
 }
 
 .gallery-card[data-layout="featured-banner"]::after {
