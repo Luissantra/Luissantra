@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Lightbox
+   ========================================================================== */
+#lightbox {
+  padding: 0;
+  border: none;
+  background: transparent;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  /* Dialog open animation */
+  transition: opacity var(--transition-base), transform var(--transition-base), display var(--transition-base) allow-discrete, overlay var(--transition-base) allow-discrete;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* @starting-style: initial state before dialog opens (enter animation) */
+@supports (selector(:open)) {
+  @starting-style {
+    #lightbox:open {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  /* Closed state for exit animation */
+  #lightbox:not(:open) {
+    opacity: 0;
+    transform: scale(0.97);
+    pointer-events: none;
+  }
+}
+
+#lightbox::backdrop {
+  background-color: var(--color-overlay);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  /* Backdrop fade in */
+  transition: opacity var(--transition-base), display var(--transition-base) allow-discrete, overlay var(--transition-base) allow-discrete;
+  opacity: 1;
+}
+
+@supports (selector(:open)) {
+  @starting-style {
+    #lightbox:open::backdrop {
+      opacity: 0;
+    }
+  }
+}
+
+.lightbox-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.lightbox-content:focus {
+  outline: none;
+}
+
+.lightbox-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.lightbox-image.is-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lightbox-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+  z-index: 10;
+}
+
+.lightbox-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.lightbox-prev {
+  left: 20px;
+}
+
+.lightbox-next {
+  right: 20px;
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+  transform: none;
+}
+
+/* Hide outline for mouse click focus on all lightbox buttons */
+.lightbox-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Explicit high-contrast focus ring for keyboard navigation */
+.lightbox-btn:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}

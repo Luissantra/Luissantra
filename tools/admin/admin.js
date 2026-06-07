@@ -211,9 +211,13 @@ function updateLocalDataFromGrid() {
     if (!orderChanged) return;
 
     if (currentGalleryId === 'favourites') {
-        apiData.favourites = newOrder;
+        const preservedFavourites = newOrder.map(src => {
+            const existing = (apiData.favourites || []).find(f => (typeof f === 'string' ? f : f.src) === src);
+            return existing || src; 
+        });
+        apiData.favourites = preservedFavourites;
         const favGallery = apiData.galleries.find(g => g.id === 'favourites');
-        if (favGallery) favGallery.images = newOrder;
+        if (favGallery) favGallery.images = preservedFavourites;
     } else {
         const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
         if (gallery) {

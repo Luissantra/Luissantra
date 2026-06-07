@@ -1,0 +1,440 @@
+/* ==========================================================================
+   Gallery Card Component
+   ========================================================================== */
+.gallery-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  contain: layout style;
+}
+
+[data-theme="dark"] .gallery-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .gallery-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-card__image-wrapper {
+  position: relative;
+  aspect-ratio: 1.618 / 1; /* Fibonacci golden ratio */
+  overflow: hidden;
+}
+
+.gallery-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.gallery-card:hover .gallery-card__image {
+  transform: scale(1.05);
+}
+
+.gallery-card__info {
+  padding: var(--space-md);
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gallery-card__title {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-xs);
+  position: relative;
+  display: inline-block;
+  margin-inline: auto;
+}
+
+.gallery-card__title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-base);
+}
+
+.gallery-card:hover .gallery-card__title::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.gallery-card__desc {
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+/* Layout variants mimicking the original folder0/folder1 */
+@media (min-width: 768px) {
+  .gallery-card[data-layout="horizontal-left"],
+  .gallery-card[data-layout="horizontal-right"] {
+    flex-direction: row;
+  }
+  
+  .gallery-card[data-layout="horizontal-right"] {
+    flex-direction: row-reverse;
+  }
+  
+  .gallery-card[data-layout^="horizontal-"] .gallery-card__image-wrapper {
+    flex: 3;
+    aspect-ratio: auto;
+  }
+  
+  .gallery-card[data-layout^="horizontal-"] .gallery-card__info {
+    flex: 2;
+  }
+}
+
+/* Featured Banner Layout (Favourites) */
+.gallery-card[data-layout="featured-banner"] {
+  position: relative;
+  display: block;
+  min-height: 300px;
+}
+
+.gallery-card[data-layout="featured-banner"] .gallery-card__image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.gallery-card[data-layout="featured-banner"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gallery-card[data-layout="featured-banner"] .gallery-card__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  color: #fff;
+  padding: var(--space-lg) var(--space-md);
+  background: transparent;
+}
+
+.gallery-card[data-layout="featured-banner"] .gallery-card__title {
+  color: #fff;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: var(--space-xs);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.gallery-card[data-layout="featured-banner"]:hover .gallery-card__title::after {
+  background-color: #fff;
+}
+
+.gallery-card[data-layout="featured-banner"] .gallery-card__desc {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+  .gallery-card[data-layout="featured-banner"] {
+    aspect-ratio: 21 / 9;
+    min-height: auto;
+  }
+}
+
+/* ==========================================================================
+   Favourites Mosaic
+   ========================================================================== */
+.mosaic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 10px;
+  grid-auto-flow: dense;
+  gap: calc(var(--space-sm) * 2 / 3);
+  padding: 0;
+  align-items: start;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.mosaic-grid.is-ready {
+  opacity: 1;
+}
+
+@media (max-width: 1440px) {
+  .mosaic-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mosaic-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 10px;
+  }
+  .mosaic-grid .photo-item--wide,
+  .mosaic-grid .photo-item--featured {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .mosaic-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 10px;
+  }
+}
+
+.mosaic-grid .photo-item {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: auto;
+}
+
+/* Modifier classes for grid spans */
+.mosaic-grid .photo-item--wide {
+  grid-column: span 2;
+}
+.mosaic-grid .photo-item--featured {
+  grid-column: span 2;
+}
+
+/* Classic 3-Column Mode Overrides */
+.mosaic-grid.is-classic {
+  display: block;
+  column-count: 4;
+  column-gap: calc(var(--space-sm) * 2 / 3);
+}
+
+@media (max-width: 1440px) {
+  .mosaic-grid.is-classic {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mosaic-grid.is-classic {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .mosaic-grid.is-classic {
+    column-count: 1;
+  }
+}
+
+.mosaic-grid.is-classic .photo-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: calc(var(--space-sm) * 2 / 3);
+  grid-row-end: auto !important; /* Override JS masonry spans */
+  height: auto;
+}
+
+.mosaic-grid.is-classic .photo-item img {
+  object-fit: contain;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  /* On 1 column, reset spans */
+  .mosaic-grid .photo-item--wide,
+  .mosaic-grid .photo-item--tall,
+  .mosaic-grid .photo-item--featured {
+    grid-column: auto;
+  }
+}
+
+.mosaic-grid .photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ==========================================================================
+   Photo Grid Items (Gallery View)
+   ========================================================================== */
+
+.layout-toggle-btn {
+  border: 1px solid currentColor;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.photos-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-md) * 2 / 3);
+  align-items: center;
+}
+
+.photo-item {
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface); /* Placeholder while loading */
+  width: 100%;
+}
+
+/* Make photo items explicitly focusable with visual feedback */
+.photo-item:focus-visible {
+  outline: 3px solid var(--color-text);
+  outline-offset: 4px;
+}
+
+/* Subtle hover overlay for clickability feedback */
+.photo-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+}
+
+.photo-item:hover::after {
+  opacity: 1;
+}
+
+.photos-grid .photo-item {
+  max-width: 1200px; /* Constrain max width for ultra-wide screens */
+}
+
+/* Use content-visibility for performance on massive galleries */
+.photo-item:nth-child(n+9) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 600px;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base), opacity 0.3s;
+}
+
+.photo-item:hover img {
+  transform: scale(1.05);
+}
+
+.photo-item.is-loading img {
+  opacity: 0;
+}
+.photo-item.is-loaded img {
+  opacity: 1;
+}
+.photo-item.is-loaded {
+  background-color: transparent;
+}
+
+/* Theme Toggle Button Animations */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  transition: background-color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.theme-toggle > svg {
+  width: 20px;
+  height: 20px;
+}
+
+#theme-toggle svg {
+  fill: currentColor;
+}
+
+#theme-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+#theme-icon-container svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+@keyframes theme-icon-exit {
+  from {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+  }
+}
+
+@keyframes theme-icon-enter {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+#theme-icon-container.is-exiting {
+  animation: theme-icon-exit 150ms ease-in forwards;
+}
+
+#theme-icon-container.is-entering {
+  animation: theme-icon-enter 150ms ease-out forwards;
+}

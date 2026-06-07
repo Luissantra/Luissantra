@@ -42,16 +42,27 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Helpers for DRY JSON read/write
+async function readJsonFile(filename, defaultData = []) {
+    try {
+        const content = await fs.readFile(path.join(__dirname, 'data', filename), 'utf-8');
+        return JSON.parse(content);
+    } catch (e) {
+        return defaultData;
+    }
+}
+
+async function writeJsonFile(filename, data) {
+    await fs.writeFile(path.join(__dirname, 'data', filename), JSON.stringify(data, null, 2));
+}
+
 // Routes
 
 // 1. Get current data
 app.get('/api/data', async (req, res) => {
     try {
-        let galleriesData = [];
-        let favouritesData = [];
-        
-        try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
-        try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+        const galleriesData = await readJsonFile('galleries.json');
+        const favouritesData = await readJsonFile('favourites.json');
         
         // Also get list of folders in images/
         const folders = await fs.readdir(path.join(__dirname, 'images'), { withFileTypes: true });
@@ -70,12 +81,8 @@ app.post('/api/save', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
             const { galleries, favourites } = req.body;
-            if (galleries) {
-                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleries, null, 2));
-            }
-            if (favourites) {
-                await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favourites, null, 2));
-            }
+            if (galleries) await writeJsonFile('galleries.json', galleries);
+            if (favourites) await writeJsonFile('favourites.json', favourites);
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -108,23 +115,20 @@ app.post('/api/photo/delete', async (req, res) => {
             const { galleryId, photo } = req.body;
             if (!galleryId || !photo) throw new Error("Missing parameters");
 
-            let favouritesData = [];
-            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
-            
-            let galleriesData = [];
-            try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
+            let favouritesData = await readJsonFile('favourites.json');
+            let galleriesData = await readJsonFile('galleries.json');
 
             if (galleryId === 'favourites') {
                 favouritesData = favouritesData.filter(f => {
                     const src = typeof f === 'string' ? f : f.src;
                     return src !== photo;
                 });
-                await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+                await writeJsonFile('favourites.json', favouritesData);
                 
                 const favGallery = galleriesData.find(g => g.id === 'favourites');
                 if (favGallery) {
                     favGallery.images = favGallery.images.filter(img => img !== photo);
-                    await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+                    await writeJsonFile('galleries.json', galleriesData);
                 }
             } else {
                 const filePath = path.join(__dirname, 'images', galleryId, photo);
@@ -133,7 +137,7 @@ app.post('/api/photo/delete', async (req, res) => {
                 const gallery = galleriesData.find(g => g.id === galleryId);
                 if (gallery) {
                     gallery.images = gallery.images.filter(img => img !== photo);
-                    await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+                    await writeJsonFile('galleries.json', galleriesData);
                 }
                 
                 const srcPath = `${galleryId}/${photo}`;
@@ -144,7 +148,7 @@ app.post('/api/photo/delete', async (req, res) => {
                     return true;
                 });
                 if (removedFromFavs) {
-                    await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+                    await writeJsonFile('favourites.json', favouritesData);
                 }
             }
             res.json({ success: true });
@@ -162,8 +166,7 @@ app.post('/api/photo/toggle-favourite', async (req, res) => {
             if (!galleryId || !photo || galleryId === 'favourites') throw new Error("Invalid parameters");
             
             const srcPath = `${galleryId}/${photo}`;
-            let favouritesData = [];
-            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+            let favouritesData = await readJsonFile('favourites.json');
             
             const isFav = favouritesData.some(f => (typeof f === 'string' ? f : f.src) === srcPath);
             if (isFav) {
@@ -171,7 +174,7 @@ app.post('/api/photo/toggle-favourite', async (req, res) => {
             } else {
                 favouritesData.push(srcPath);
             }
-            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+            await writeJsonFile('favourites.json', favouritesData);
             
             res.json({ success: true, isFavourite: !isFav });
         } catch (e) {
@@ -187,8 +190,7 @@ app.post('/api/photo/toggle-featured', async (req, res) => {
             const { photo } = req.body;
             if (!photo) throw new Error("Missing photo parameter");
             
-            let favouritesData = [];
-            try { favouritesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'favourites.json'), 'utf-8')); } catch(e) {}
+            let favouritesData = await readJsonFile('favourites.json');
             
             // Normalize all entries to objects
             favouritesData = favouritesData.map(f => typeof f === 'string' ? { src: f } : f);
@@ -200,7 +202,7 @@ app.post('/api/photo/toggle-featured', async (req, res) => {
             
             entry.featured = !entry.featured;
             
-            await fs.writeFile(path.join(__dirname, 'data', 'favourites.json'), JSON.stringify(favouritesData, null, 2));
+            await writeJsonFile('favourites.json', favouritesData);
             
             res.json({ success: true, isFeatured: entry.featured });
         } catch (e) {
@@ -216,8 +218,7 @@ app.post('/api/gallery/set-cover', async (req, res) => {
             const { galleryId, photo } = req.body;
             if (!galleryId || !photo) throw new Error("Missing parameters");
             
-            let galleriesData = [];
-            try { galleriesData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', 'galleries.json'), 'utf-8')); } catch(e) {}
+            let galleriesData = await readJsonFile('galleries.json');
             
             const gallery = galleriesData.find(g => g.id === galleryId);
             if (gallery) {
@@ -226,7 +227,7 @@ app.post('/api/gallery/set-cover', async (req, res) => {
                 } else {
                     gallery.coverImage = `images/${galleryId}/${photo}`;
                 }
-                await fs.writeFile(path.join(__dirname, 'data', 'galleries.json'), JSON.stringify(galleriesData, null, 2));
+                await writeJsonFile('galleries.json', galleriesData);
             }
             res.json({ success: true });
         } catch (e) {

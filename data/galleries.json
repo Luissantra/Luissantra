@@ -61,7 +61,8 @@
         "featured": true
       },
       {
-        "src": "japan/japan-37.webp"
+        "src": "japan/japan-37.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-51.webp"
@@ -90,7 +91,8 @@
         "src": "japan/japan-64.webp"
       },
       {
-        "src": "japan/japan-67.webp"
+        "src": "japan/japan-67.webp",
+        "featured": true
       },
       {
         "src": "japan/japan-65.webp",
@@ -107,7 +109,8 @@
         "src": "japan/japan-84.webp"
       },
       {
-        "src": "japan/japan-85.webp"
+        "src": "japan/japan-85.webp",
+        "featured": true
       },
       {
         "src": "red-dead-redemption-2/red-dead-redemption-2-caratula.webp",
@@ -159,10 +162,12 @@
         "src": "spider-man-miles-morales/spider-man-miles-morales-07.webp"
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-25.webp"
+        "src": "spider-man-miles-morales/spider-man-miles-morales-25.webp",
+        "featured": true
       },
       {
-        "src": "spider-man-miles-morales/spider-man-miles-morales-caratula.webp"
+        "src": "spider-man-miles-morales/spider-man-miles-morales-caratula.webp",
+        "featured": true
       },
       {
         "src": "the-last-guardian/the-last-guardian-01.webp"
@@ -183,7 +188,8 @@
         "src": "the-last-guardian/the-last-guardian-caratula.webp"
       },
       {
-        "src": "red-dead-redemption-2/red-dead-redemption-2-13.webp"
+        "src": "red-dead-redemption-2/red-dead-redemption-2-13.webp",
+        "featured": true
       },
       {
         "src": "the-last-of-us-2/the-last-of-us-2-03.webp"

@@ -45,7 +45,7 @@ export async function initGalleryPage() {
       </div>
       <div class="photos-grid">
         ${gallery.images.map((img, i) => `
-          <div class="photo-item is-loading" data-index="${i}">
+          <div class="photo-item is-loading" data-index="${i}" tabindex="0">
             <img src="images/${gallery.id}/${typeof img === 'string' ? img : img.src}" alt="${gallery.title} photo ${i + 1}" loading="lazy">
           </div>
         `).join('')}
@@ -216,7 +216,7 @@ function renderFavouritesGallery(galleries, container) {
     <div class="mosaic-grid is-ready" style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md) var(--space-lg);">
       ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
       ${favourites.map((f, i) => `
-        <div class="photo-item is-loading" data-index="${i}" data-featured="${f.featured ? 'true' : 'false'}" style="view-transition-name: photo-${i};">
+        <div class="photo-item is-loading" data-index="${i}" data-featured="${f.featured ? 'true' : 'false'}" tabindex="0" style="view-transition-name: photo-${i};">
           <img src="${f.src}" alt="${f.alt}" loading="lazy">
         </div>
       `).join('')}

@@ -19,6 +19,13 @@ export function initLightbox() {
       currentImageIndex = parseInt(item.getAttribute('data-index'));
       openLightbox();
     });
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        currentImageIndex = parseInt(item.getAttribute('data-index'));
+        openLightbox();
+      }
+    });
   });
 
   document.getElementById('lightbox-close').addEventListener('click', () => lightbox.close());
@@ -37,6 +44,13 @@ export function initLightbox() {
       }
     });
   }
+
+  lightbox.addEventListener('close', () => {
+    const activeItem = document.querySelector(`.photo-item[data-index="${currentImageIndex}"]`);
+    if (activeItem) {
+      activeItem.focus();
+    }
+  });
 }
 
 function preloadAdjacentImages() {
