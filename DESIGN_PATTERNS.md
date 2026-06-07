@@ -73,9 +73,9 @@ El proyecto es una aplicación frontend **vanilla** (sin frameworks pesados como
 
 Para agilizar el flujo de trabajo sin sobrecargar el frontend de producción, el proyecto incorpora herramientas de administración locales:
 
-### A. Panel de Administración CMS (`admin-server.js` + `tools/admin/index.html`)
+### A. Panel de Administración CMS (`admin-server.js` + `tools/admin/`)
 
-Servidor local en Node.js (Express) para gestionar el portfolio visualmente. Se inicia con `npm run admin` y se accede en `http://localhost:3030/admin`.
+Servidor local en Node.js (Express) para gestionar el portfolio visualmente. Se inicia con `npm run admin` y se accede en `http://localhost:3030/admin`. El frontend del panel está modularizado de forma limpia en `index.html` (estructura HTML pura), `admin.css` (estilos) y `admin.js` (lógica) dentro del directorio `tools/admin/`.
 
 *   **API REST:** Rutas para leer/guardar configuraciones en `galleries.json` y `favourites.json`, cargar imágenes en caliente, eliminar archivos físicos del disco y configurar portadas de galerías.
 *   **Procesamiento de Archivos:** Implementa `multer` para la carga segura y organizada de imágenes directamente a la carpeta de la galería seleccionada.
@@ -85,12 +85,7 @@ Servidor local en Node.js (Express) para gestionar el portfolio visualmente. Se 
 *   **Indicador Visual de Favoritos:** Las imágenes que ya pertenecen a la galería de Favourites muestran un badge rojo con el icono ❤ en la esquina superior derecha de la tarjeta, independientemente de si están dentro de la galería de favoritos o en otra galería.
 *   **Disparador de Build:** Expone un endpoint `/api/build` que ejecuta el script `build.js` en un subproceso de Node (`child_process.spawn`) devolviendo el log de consola en tiempo real al navegador.
 
-### B. Herramienta de Reordenación Estática (`tools/reorder.html`)
-
-Una alternativa sin backend que aprovecha la API nativa de navegadores modernos **File System Access API** (`window.showDirectoryPicker`):
-*   Permite al usuario seleccionar el directorio local `data/` con permisos de lectura/escritura y manipular interactivamente el orden de las imágenes a través de `SortableJS` escribiendo directamente el nuevo JSON al disco local desde el sandbox del navegador mediante `FileSystemWritableFileStream`.
-
-### C. Automatización del Build (`scripts/build.js`)
+### B. Automatización del Build (`scripts/build.js`)
 
 Script en Node.js que utiliza la librería de procesamiento de alto rendimiento `sharp` para:
 1.  Escanear las carpetas físicas dentro de `images/`.
@@ -98,12 +93,6 @@ Script en Node.js que utiliza la librería de procesamiento de alto rendimiento 
 3.  Generar miniaturas de carga rápida prefijadas con `thumb_`.
 4.  Mover los originales a la carpeta `originals/` como respaldo para evitar inflar el tamaño de la web desplegada.
 5.  Actualizar y sincronizar automáticamente la base de datos estática `data/galleries.json`.
-
-### D. Normalizador de Nombres (`tools/rename.py`)
-
-Script en Python de utilidad que automatiza la nomenclatura de los archivos de imagen:
-*   Normaliza los nombres de archivo bajo el esquema `{id_galeria}-{secuencial:02d}.webp` (ej. `japon-01.webp`, `japon-02.webp`) y `{id_galeria}-caratula.webp` para la foto de portada.
-*   Actualiza simultáneamente los nombres correspondientes en las carpetas de imágenes optimizadas (`images/`), originales (`originals/`), miniaturas y las referencias dentro de `data/galleries.json`.
 
 ---
 

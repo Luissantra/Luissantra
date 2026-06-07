@@ -65,9 +65,9 @@ El portfolio consta de dos vistas principales (`index.html` y `gallery.html`) y 
 
 Para evitar la edición manual de archivos JSON y la optimización manual de imágenes pesadas, el portafolio incorpora un conjunto de herramientas locales de desarrollo.
 
-### A. Panel de Administración CMS (`admin-server.js` y `tools/admin/index.html`)
+### A. Panel de Administración CMS (`admin-server.js` y `tools/admin/`)
 
-Es una aplicación local con interfaz gráfica web para gestionar todo el portfolio. Se inicia mediante el comando `npm run admin` y se accede en `http://localhost:3030/admin`.
+Es una aplicación local con interfaz gráfica web para gestionar todo el portfolio. Se inicia mediante el comando `npm run admin` y se accede en `http://localhost:3030/admin`. El frontend del panel está estructurado modularmente en `index.html` (layout), `admin.css` (estilos) y `admin.js` (lógica) dentro del directorio `tools/admin/`.
 
 **Estructura:** Diseño de dos paneles (sidebar + contenido principal). La barra lateral lista las galerías; el panel principal muestra las imágenes de la galería activa.
 
@@ -93,19 +93,7 @@ Es una aplicación local con interfaz gráfica web para gestionar todo el portfo
 *   **Sistema de Notificaciones (Toast):**
     *   Todas las operaciones (guardado, upload, build, error) muestran una notificación flotante temporal en la esquina inferior derecha con código de color (verde para éxito, rojo para error).
 
-### B. Ordenador Estático Autónomo (`tools/reorder.html`)
-
-*   Una alternativa ligera al panel CMS Express que **no requiere Node activo en terminal**.
-*   Utiliza la API nativa de navegadores modernos **File System Access API** (`window.showDirectoryPicker()`).
-*   El usuario selecciona la carpeta local `data/`, el script carga los archivos `galleries.json` y `favourites.json` directamente en la memoria del navegador, permite reordenar con `SortableJS` y escribe de vuelta al disco directamente a través de flujos de escritura locales seguros (`FileSystemWritableFileStream`).
-
-### C. Script Normalizador de Nombres (`tools/rename.py`)
-
-*   Script programado en Python diseñado para mantener limpios los directorios de imágenes.
-*   Renombra recursivamente todas las fotos de una galería bajo un estándar numérico secuencial de dos dígitos (ej. `islandia-caratula.webp`, `islandia-01.webp`, `islandia-02.webp`...), evitando caracteres extraños o nombres largos de cámaras.
-*   Actualiza simultáneamente los archivos de configuración JSON con los nuevos nombres generados para no romper los enlaces visuales de la web.
-
-### D. Pipeline de Procesamiento de Imágenes (`scripts/build.js`)
+### B. Pipeline de Procesamiento de Imágenes (`scripts/build.js`)
 
 *   Es el motor de optimización que reduce el peso del portfolio. Se ejecuta mediante `npm run build` o a través del botón «Build» del CMS.
 *   **Optimización WebP (Ejecución Paralela):** Escanea los directorios de fotos y las convierte al formato optimizado WebP utilizando la librería de alto rendimiento `sharp`. Utiliza procesamiento paralelo concurrente, procesando lotes de imágenes a la vez en lugar de forma secuencial, para acelerar exponencialmente el tiempo de compilación general.
