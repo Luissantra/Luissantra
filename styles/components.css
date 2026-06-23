@@ -380,7 +380,7 @@
   height: 40px;
   border-radius: 50%;
   background-color: var(--color-surface);
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), opacity var(--transition-base), visibility var(--transition-base);
 }
 
 .theme-toggle:hover {
