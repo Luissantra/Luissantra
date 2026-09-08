@@ -1,4 +1,5 @@
 import { setupLightbox, initLightbox } from './lightbox.js';
+import { loadImageSizes, imageAttrs } from './images.js';
 
 let resizeController = null;
 
@@ -15,12 +16,15 @@ export async function initGalleryPage() {
   if (!container) return;
 
   try {
-    const res = await fetch('data/galleries.json');
+    const [res, sizesMap] = await Promise.all([
+      fetch('data/galleries.json'),
+      loadImageSizes()
+    ]);
     if (!res.ok) throw new Error('Failed to load galleries');
     const galleries = await res.json();
-    
+
     if (galleryId === 'favourites') {
-      renderFavouritesGallery(galleries, container);
+      renderFavouritesGallery(galleries, container, sizesMap);
       return;
     }
 
@@ -44,11 +48,15 @@ export async function initGalleryPage() {
         <p>${gallery.description}</p>
       </div>
       <div class="photos-grid">
-        ${gallery.images.map((img, i) => `
+        ${gallery.images.map((img, i) => {
+          const rel = `${gallery.id}/${typeof img === 'string' ? img : img.src}`;
+          const attrs = imageAttrs(rel, sizesMap, '(max-width: 1200px) 100vw, 1200px');
+          return `
           <div class="photo-item is-loading" data-index="${i}" tabindex="0">
-            <img src="images/${gallery.id}/${typeof img === 'string' ? img : img.src}" alt="${gallery.title} photo ${i + 1}" loading="lazy">
+            <img ${attrs} alt="${gallery.title} photo ${i + 1}" loading="lazy">
           </div>
-        `).join('')}
+        `;
+        }).join('')}
       </div>
     `;
 
@@ -175,7 +183,7 @@ function resizeAllGridItems(container) {
   });
 }
 
-function renderFavouritesGallery(galleries, container) {
+function renderFavouritesGallery(galleries, container, sizesMap) {
   const favGallery = galleries.find(g => g.id === 'favourites');
   if (!favGallery) {
     container.innerHTML = '<p>Gallery not found.</p>';
@@ -195,6 +203,7 @@ function renderFavouritesGallery(galleries, container) {
     
     return {
       src: `images/${srcStr}`,
+      rel: srcStr,
       alt: `Favourite shot`,
       featured: isFeatured
     };
@@ -220,15 +229,22 @@ function renderFavouritesGallery(galleries, container) {
     </div>
     <div class="mosaic-grid is-ready" style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md) var(--space-lg);">
       ${favourites.length === 0 ? '<p style="grid-column: 1 / -1; text-align: center;">No favourite images yet. Add some to images/favourites/ and update data/galleries.json.</p>' : ''}
-      ${favourites.map((f, i) => `
+      ${favourites.map((f, i) => {
+        const attrs = imageAttrs(f.rel, sizesMap, '(max-width: 600px) 100vw, (max-width: 1024px) 50vw, (max-width: 1440px) 33vw, 25vw');
+        return `
         <div class="photo-item is-loading" data-index="${i}" data-featured="${f.featured ? 'true' : 'false'}" tabindex="0" style="view-transition-name: photo-${i};">
-          <img src="${f.src}" alt="${f.alt}" loading="lazy">
+          <img ${attrs} alt="${f.alt}" loading="lazy">
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>
   `;
 
   container.innerHTML = html;
+
+  // Primer cálculo inmediato: los atributos width/height del marcado bastan,
+  // no hace falta que ninguna imagen haya cargado todavía.
+  resizeAllGridItems(container);
 
   const grid = container.querySelector('.mosaic-grid');
   const allImgs = container.querySelectorAll('.photo-item img');

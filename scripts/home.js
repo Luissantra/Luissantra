@@ -1,4 +1,5 @@
 import { setIsNavigating } from './ui.js';
+import { loadImageSizes, imageAttrs } from './images.js';
 
 let carouselIntervalId = null;
 
@@ -7,10 +8,13 @@ export async function initHomePage() {
   if (!container) return;
 
   try {
-    const res = await fetch('data/galleries.json');
+    const [res, sizesMap] = await Promise.all([
+      fetch('data/galleries.json'),
+      loadImageSizes()
+    ]);
     if (!res.ok) throw new Error('Failed to load galleries');
     const galleries = await res.json();
-    
+
     const photography = galleries.filter(g => g.category === 'photography');
     const inGame = galleries.filter(g => g.category === 'in-game');
 
@@ -52,7 +56,7 @@ export async function initHomePage() {
           <div id="section-photography" class="scroll-anchor"></div>
           <h2 class="section-title fade-in-up">Photography</h2>
           <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
-            ${photography.map((g, i) => renderGalleryCard(g, i)).join('')}
+            ${photography.map((g, i) => renderGalleryCard(g, i, sizesMap)).join('')}
           </div>
         </section>
       `;
@@ -64,7 +68,7 @@ export async function initHomePage() {
           <div id="section-in-game" class="scroll-anchor"></div>
           <h2 class="section-title gaming fade-in-up">In-Game Photography</h2>
           <div class="gallery-grid">
-            ${inGame.map((g, i) => renderGalleryCard(g, i)).join('')}
+            ${inGame.map((g, i) => renderGalleryCard(g, i, sizesMap)).join('')}
           </div>
         </section>
       `;
@@ -161,13 +165,15 @@ export async function initHomePage() {
   }
 }
 
-function renderGalleryCard(gallery, index) {
+function renderGalleryCard(gallery, index, sizesMap) {
   const layout = index % 2 === 0 ? 'horizontal-left' : 'horizontal-right';
-  
+  const rel = gallery.coverImage.replace(/^images\//, '');
+  const attrs = imageAttrs(rel, sizesMap, '(max-width: 768px) 100vw, 50vw');
+
   return `
     <a href="gallery.html?id=${gallery.id}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${index * 100}ms">
       <div class="gallery-card__image-wrapper">
-        <img class="gallery-card__image" src="${gallery.coverImage}" alt="${gallery.title} cover image" loading="lazy" width="600" height="400">
+        <img class="gallery-card__image" ${attrs} alt="${gallery.title} cover image" loading="lazy">
       </div>
       <div class="gallery-card__info">
         <h3 class="gallery-card__title">${gallery.title}</h3>
