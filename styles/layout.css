@@ -89,10 +89,14 @@
     transform: translateX(100%);
     /* visibility keeps the closed drawer out of the tab order and the
        accessibility tree. It is switched with a 0s transition that is delayed
-       until the slide-out finishes, so the panel still animates on close. */
+       until the slide-out finishes, so the panel still animates on close.
+       The delay uses --transition-base-duration (a bare duration) rather
+       than --transition-base (duration + timing function): stacking a
+       second timing function onto "0s linear <duration> <timing>" is
+       invalid, and one invalid item invalidates the whole shorthand. */
     visibility: hidden;
     transition: transform var(--transition-base),
-                visibility 0s linear var(--transition-base);
+                visibility 0s linear var(--transition-base-duration);
   }
 
   .nav-links.is-open {
