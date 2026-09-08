@@ -269,6 +269,15 @@ async function build() {
   const jsonPath = path.join(DATA_DIR, 'galleries.json');
   await fs.writeFile(jsonPath, JSON.stringify(galleries, null, 2));
   console.log(`\nSuccessfully wrote gallery data to ${jsonPath}`);
+
+  // El hero de index.html apunta a un fichero fijo. Avisar si desaparece.
+  const HERO_IMAGE = 'spider-man-miles-morales/spider-man-miles-morales-01.webp';
+  try {
+    await fs.access(path.join(IMAGES_DIR, HERO_IMAGE));
+  } catch (err) {
+    console.warn(`\nAviso: falta ${HERO_IMAGE}, que index.html usa como hero. Actualiza el marcado o restaura la foto.`);
+  }
+
   console.log('Build complete!');
 }
 
