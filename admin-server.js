@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs/promises');
 const { spawn } = require('child_process');
+const { safeSegment, safeFilename } = require('./scripts/lib/safe-path');
 
 class AsyncQueue {
   constructor() {
@@ -22,21 +23,32 @@ const app = express();
 const port = 3030;
 
 app.use(express.json({ limit: '50mb' }));
-app.use(express.static(__dirname)); // Serve files so images can be loaded in UI
+// Solo lo que el panel necesita cargar por HTTP. Servir __dirname entero
+// publicaría .git, node_modules y los JSON de datos.
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/tools/admin', express.static(path.join(__dirname, 'tools', 'admin')));
 
 // Configuration for Multer (File Uploads)
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
-    const galleryId = req.body.galleryId;
-    if (galleryId === 'favourites') {
-        return cb(new Error("No puedes subir fotos directamente a favoritos. Súbelas a una galería específica primero."));
+    try {
+      const galleryId = safeSegment(req.body.galleryId);
+      if (galleryId === 'favourites') {
+        throw new Error('No puedes subir fotos directamente a favoritos. Súbelas a una galería específica primero.');
+      }
+      const dir = path.join(__dirname, 'images', galleryId);
+      await fs.mkdir(dir, { recursive: true });
+      cb(null, dir);
+    } catch (e) {
+      cb(e);
     }
-    const dir = path.join(__dirname, 'images', galleryId);
-    await fs.mkdir(dir, { recursive: true });
-    cb(null, dir);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    try {
+      cb(null, safeFilename(file.originalname));
+    } catch (e) {
+      cb(e);
+    }
   }
 });
 
@@ -98,8 +110,8 @@ app.post('/api/upload', upload.array('photos'), (req, res) => {
 // 4. Create new gallery folder
 app.post('/api/gallery/new', async (req, res) => {
     try {
-        const { galleryId } = req.body;
-        if (!galleryId || galleryId === 'favourites') throw new Error("ID de galería inválido");
+        const galleryId = safeSegment(req.body.galleryId);
+        if (galleryId === 'favourites') throw new Error('ID de galería inválido');
         const dir = path.join(__dirname, 'images', galleryId);
         await fs.mkdir(dir, { recursive: true });
         res.json({ success: true });
@@ -112,8 +124,10 @@ app.post('/api/gallery/new', async (req, res) => {
 app.post('/api/photo/delete', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
-            const { galleryId, photo } = req.body;
-            if (!galleryId || !photo) throw new Error("Missing parameters");
+            const galleryId = safeSegment(req.body.galleryId);
+            const photo = galleryId === 'favourites'
+              ? String(req.body.photo)
+              : safeFilename(req.body.photo);
 
             let favouritesData = await readJsonFile('favourites.json');
             let galleriesData = await readJsonFile('galleries.json');
@@ -162,9 +176,10 @@ app.post('/api/photo/delete', async (req, res) => {
 app.post('/api/photo/toggle-favourite', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
-            const { galleryId, photo } = req.body;
-            if (!galleryId || !photo || galleryId === 'favourites') throw new Error("Invalid parameters");
-            
+            const galleryId = safeSegment(req.body.galleryId);
+            const photo = safeFilename(req.body.photo);
+            if (galleryId === 'favourites') throw new Error('Invalid parameters');
+
             const srcPath = `${galleryId}/${photo}`;
             let favouritesData = await readJsonFile('favourites.json');
             
@@ -215,9 +230,11 @@ app.post('/api/photo/toggle-featured', async (req, res) => {
 app.post('/api/gallery/set-cover', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
-            const { galleryId, photo } = req.body;
-            if (!galleryId || !photo) throw new Error("Missing parameters");
-            
+            const galleryId = safeSegment(req.body.galleryId);
+            const photo = galleryId === 'favourites'
+              ? String(req.body.photo)
+              : safeFilename(req.body.photo);
+
             let galleriesData = await readJsonFile('galleries.json');
             
             const gallery = galleriesData.find(g => g.id === galleryId);
