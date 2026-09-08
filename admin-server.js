@@ -283,6 +283,15 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'tools', 'admin', 'index.html'));
 });
 
+// Manejador de errores centralizado. Los callbacks de multer (destination/filename)
+// llaman a cb(e) cuando el sanitizador rechaza galleryId o el nombre de fichero, y eso
+// llega aquí vía next(err). Sin este middleware, Express cae en su manejador por defecto:
+// HTML 500 con la traza completa, incluidas rutas absolutas del servidor. Debe ir
+// registrado después de todas las rutas y antes de app.listen.
+app.use((err, req, res, next) => {
+    res.status(500).json({ error: err.message });
+});
+
 // Start Server
 app.listen(port, () => {
     console.log(`\n======================================================`);
