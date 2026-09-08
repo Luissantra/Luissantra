@@ -44,3 +44,15 @@ test('mergeSizes ordena las claves para que el diff sea estable', () => {
     'japan/japan-13.webp'
   ]);
 });
+
+test('mergeSizes no resucita el valor previo cuando el descubierto es invalido', () => {
+  const previous = { 'japan/japan-13.webp': { w: 1920, h: 1280 } };
+  for (const invalid of [null, undefined, 0, false, '']) {
+    const result = mergeSizes(previous, { 'japan/japan-13.webp': invalid });
+    assert.deepEqual(
+      result,
+      {},
+      `no debe resucitar el valor previo con valor invalido: ${String(invalid)}`
+    );
+  }
+});

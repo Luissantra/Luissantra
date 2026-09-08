@@ -124,8 +124,13 @@ async function build() {
       const originalBackupPath = path.join(originalGalleryDir, file);
 
       if (fileExt.toLowerCase() === '.webp') {
-        const meta = await sharp(filePath).metadata();
-        return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
+        try {
+          const meta = await sharp(filePath).metadata();
+          return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
+        } catch (err) {
+          console.error(`  Error processing ${file}:`, err);
+          return { success: false, file };
+        }
       }
 
       try {
