@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const sharp = require('sharp');
 const { mergeSizes, SIZES_FILE } = require('./lib/image-sizes');
+const { VARIANT_WIDTHS, variantName, isVariant } = require('./lib/variants');
 
 const IMAGES_DIR = path.join(__dirname, '../images');
 const ORIGINALS_DIR = path.join(__dirname, '../originals');
@@ -63,6 +64,20 @@ function getCategory(folderName) {
   return 'in-game';
 }
 
+// Genera las variantes reducidas junto al fichero base. withoutEnlargement
+// evita crear una "variante" mayor que el original en fotos pequeñas.
+async function writeVariants(sourcePath, folderPath, largeWebpName, sourceWidth) {
+  for (const width of VARIANT_WIDTHS) {
+    if (sourceWidth && sourceWidth <= width) continue;
+    const target = path.join(folderPath, variantName(largeWebpName, width));
+    await sharp(sourcePath)
+      .rotate()
+      .resize({ width, withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toFile(target);
+  }
+}
+
 async function build() {
   console.log('Starting image optimization and data generation...');
   
@@ -96,7 +111,7 @@ async function build() {
     await fs.mkdir(originalGalleryDir, { recursive: true });
 
     const files = await fs.readdir(folderPath);
-    const imageFiles = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f) && !f.startsWith('thumb_'))
+    const imageFiles = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f) && !f.startsWith('thumb_') && !isVariant(f))
       .sort((a, b) => {
         if (a.includes('-caratula')) return -1;
         if (b.includes('-caratula')) return 1;
@@ -126,6 +141,7 @@ async function build() {
       if (fileExt.toLowerCase() === '.webp') {
         try {
           const meta = await sharp(filePath).metadata();
+          await writeVariants(filePath, folderPath, largeWebpName, meta.width);
           return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
         } catch (err) {
           console.error(`  Error processing ${file}:`, err);
@@ -145,6 +161,7 @@ async function build() {
         await fs.rename(filePath, originalBackupPath);
 
         const meta = await sharp(largePath).metadata();
+        await writeVariants(largePath, folderPath, largeWebpName, meta.width);
         return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
       } catch (err) {
         console.error(`  Error processing ${file}:`, err);
