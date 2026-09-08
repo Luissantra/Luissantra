@@ -35,7 +35,7 @@ export async function initGalleryPage() {
       return;
     }
 
-    document.title = `${gallery.title} — Photography Portfolio`;
+    document.title = `${gallery.title} - Photography Portfolio`;
     const currentImages = gallery.images.map(img => `images/${gallery.id}/${typeof img === 'string' ? img : img.src}`);
     setupLightbox(currentImages);
 
@@ -191,7 +191,7 @@ function renderFavouritesGallery(galleries, container, sizesMap) {
     return;
   }
 
-  document.title = `${favGallery.title} — Photography Portfolio`;
+  document.title = `${favGallery.title} - Photography Portfolio`;
   
   const favourites = favGallery.images.map((img, index) => {
     const isObj = typeof img !== 'string';
