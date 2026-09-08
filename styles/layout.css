@@ -87,11 +87,18 @@
     margin: 0; /* Reset desktop margins */
     z-index: 105;
     transform: translateX(100%);
-    transition: transform var(--transition-base);
+    /* visibility keeps the closed drawer out of the tab order and the
+       accessibility tree. It is switched with a 0s transition that is delayed
+       until the slide-out finishes, so the panel still animates on close. */
+    visibility: hidden;
+    transition: transform var(--transition-base),
+                visibility 0s linear var(--transition-base);
   }
 
   .nav-links.is-open {
     transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--transition-base), visibility 0s;
   }
 
   .nav-link {
