@@ -172,7 +172,7 @@ function renderGalleryCard(gallery, index, sizesMap) {
   const attrs = imageAttrs(rel, sizesMap, '(max-width: 768px) 100vw, 50vw');
 
   return `
-    <a href="gallery.html?id=${gallery.id}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${index * 100}ms">
+    <a href="gallery.html?id=${esc(gallery.id)}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${index * 100}ms">
       <div class="gallery-card__image-wrapper">
         <img class="gallery-card__image" ${attrs} alt="${esc(gallery.title)} cover image" loading="lazy">
       </div>
