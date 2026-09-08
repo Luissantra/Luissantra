@@ -229,12 +229,17 @@ function updateLocalDataFromGrid() {
 
 async function saveOrder() {
     try {
-        await fetch('/api/save', {
+        const res = await fetch('/api/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ galleries: apiData.galleries, favourites: apiData.favourites })
         });
-        showToast("Orden guardado. (No olvides hacer Build al terminar)", "success");
+        if (res.ok) {
+            showToast("Orden guardado. (No olvides hacer Build al terminar)", "success");
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showToast(data.error || "Error al guardar", "error");
+        }
     } catch (e) {
         showToast("Error al guardar", "error");
     }
@@ -263,10 +268,10 @@ async function uploadFiles(fileList) {
     showLoader("Subiendo fotos...");
     try {
         const res = await fetch('/api/upload', { method: 'POST', body: formData });
-        const data = await res.json();
-        if (data.success) {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success) {
             showToast(`¡Subidas ${data.files.length} fotos! Ejecuta "Build" para optimizarlas.`, "success");
-            
+
             const grid = document.getElementById('sortable-grid');
             data.files.forEach(filename => {
                 const item = document.createElement('div');
@@ -274,13 +279,15 @@ async function uploadFiles(fileList) {
                 item.dataset.img = filename;
                 item.innerHTML = `<img src="/images/${currentGalleryId}/${filename}" loading="lazy">`;
                 grid.appendChild(item);
-                
+
                 const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
                 if (gallery) gallery.images.push(filename);
             });
             if (apiData.galleries.find(g => g.id === currentGalleryId)) {
                 saveOrder();
             }
+        } else {
+            showToast(data.error || "Error al subir", "error");
         }
     } catch (e) {
         showToast("Error al subir", "error");
@@ -305,6 +312,9 @@ async function createGallery() {
             await init(true);
             loadGallery(id);
             showToast("¡Galería creada! Arrastra fotos para empezar.", "success");
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showToast(data.error || "Error al crear la galería", "error");
         }
     } catch (e) {
         showToast("Error al crear la galería", "error");
@@ -346,6 +356,9 @@ async function deletePhoto(photo) {
             await init(true);
             loadGallery(currentGalleryId);
             showToast("Foto eliminada", "success");
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showToast(data.error || "Error al eliminar", "error");
         }
     } catch (e) {
         showToast("Error al eliminar", "error");
@@ -506,6 +519,9 @@ async function setCover(photo) {
             await init(true);
             loadGallery(currentGalleryId);
             showToast("Portada actualizada", "success");
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showToast(data.error || "Error al establecer portada", "error");
         }
     } catch (e) {
         showToast("Error al establecer portada", "error");

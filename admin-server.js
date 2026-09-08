@@ -3,7 +3,13 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs/promises');
 const { spawn } = require('child_process');
-const { safeSegment, safeFilename } = require('./scripts/lib/safe-path');
+const {
+  safeSegment,
+  safeFilename,
+  safeRelativeImagePath,
+  normalizeUploadFilename,
+  dedupeFilename
+} = require('./scripts/lib/safe-path');
 const { VARIANT_WIDTHS, variantName } = require('./scripts/lib/variants');
 
 class AsyncQueue {
@@ -44,9 +50,33 @@ const storage = multer.diskStorage({
       cb(e);
     }
   },
-  filename: function (req, file, cb) {
+  // Normaliza en vez de rechazar: el formato de captura de PlayStation
+  // ("Ghost of Tsushima_20240115181523.jpg") y nombres similares con
+  // espacios, acentos o símbolos no pasan safeFilename, pero no son
+  // maliciosos. normalizeUploadFilename los transcribe a algo que sí pasa
+  // safeFilename por construcción. safeFilename ya solo se usa aquí en
+  // /api/photo/delete, /api/photo/toggle-favourite y /api/gallery/set-cover,
+  // que reciben nombres de ficheros que YA existen en disco: ahí seguir
+  // validando (y rechazando) es lo correcto.
+  filename: async function (req, file, cb) {
     try {
-      cb(null, safeFilename(file.originalname));
+      const galleryId = safeSegment(req.body.galleryId);
+      const normalized = normalizeUploadFilename(file.originalname);
+
+      // Recuerda qué nombres están ocupados en este mismo lote (además de en
+      // disco) para que dos capturas que normalicen al mismo nombre no se
+      // pisen entre sí en una sola subida.
+      if (!req.__uploadTakenNames) {
+        let existing = [];
+        try {
+          existing = await fs.readdir(path.join(__dirname, 'images', galleryId));
+        } catch (e) {
+          existing = [];
+        }
+        req.__uploadTakenNames = new Set(existing);
+      }
+
+      cb(null, dedupeFilename(normalized, req.__uploadTakenNames));
     } catch (e) {
       cb(e);
     }
@@ -57,16 +87,85 @@ const upload = multer({ storage: storage });
 
 // Helpers for DRY JSON read/write
 async function readJsonFile(filename, defaultData = []) {
+    let content;
     try {
-        const content = await fs.readFile(path.join(__dirname, 'data', filename), 'utf-8');
+        content = await fs.readFile(path.join(__dirname, 'data', filename), 'utf-8');
+    } catch (e) {
+        // Fichero ausente: es el arranque normal antes del primer build o
+        // guardado, así que el valor por defecto es correcto.
+        if (e.code === 'ENOENT') return defaultData;
+        throw e;
+    }
+    try {
         return JSON.parse(content);
     } catch (e) {
-        return defaultData;
+        // El fichero existe pero está corrupto. Degradar en silencio al
+        // valor por defecto arrancaría el CMS con estado vacío, y el
+        // siguiente guardado escribiría ese vacío encima con HTTP 200 y sin
+        // aviso: hay que distinguir "ausente" de "ilegible" y propagar.
+        throw new Error(`El fichero de datos "${filename}" existe pero no contiene JSON válido: ${e.message}`);
     }
 }
 
 async function writeJsonFile(filename, data) {
     await fs.writeFile(path.join(__dirname, 'data', filename), JSON.stringify(data, null, 2));
+}
+
+// Valida la forma de una entrada de imagen (galleries[i].images[j] o
+// favourites[i]): puede ser una cadena o un objeto { src, featured }. La
+// mitad "featured", si está presente, debe ser boolean.
+function validateImageEntry(galleryId, entry, label) {
+    const src = typeof entry === 'string' ? entry : (entry && typeof entry === 'object' && !Array.isArray(entry) ? entry.src : undefined);
+    if (typeof src !== 'string') {
+        throw new Error(`${label} no tiene una ruta de imagen válida`);
+    }
+    // La galería "favourites" (tanto la propia lista de favourites.json como
+    // la galería sintética del mismo id dentro de galleries.json) usa rutas
+    // "galeria/fichero"; el resto de galerías usan nombres de fichero sueltos.
+    if (galleryId === 'favourites') {
+        safeRelativeImagePath(src);
+    } else {
+        safeFilename(src);
+    }
+    if (entry && typeof entry === 'object' && !Array.isArray(entry) && 'featured' in entry && typeof entry.featured !== 'boolean') {
+        throw new Error(`${label}.featured debe ser boolean`);
+    }
+}
+
+// Valida galleries.json completo antes de escribir nada. Lanza en el primer
+// problema con un mensaje que dice exactamente qué entrada falló.
+function validateGalleries(galleries) {
+    if (!Array.isArray(galleries)) {
+        throw new Error('galleries debe ser un array');
+    }
+    galleries.forEach((gallery, i) => {
+        if (!gallery || typeof gallery !== 'object' || Array.isArray(gallery)) {
+            throw new Error(`galleries[${i}] debe ser un objeto`);
+        }
+        let galleryId;
+        try {
+            galleryId = safeSegment(gallery.id);
+        } catch (e) {
+            throw new Error(`galleries[${i}].id: ${e.message}`);
+        }
+        if (!Array.isArray(gallery.images)) {
+            throw new Error(`galleries[${i}].images debe ser un array`);
+        }
+        gallery.images.forEach((img, j) => {
+            validateImageEntry(galleryId, img, `galleries[${i}].images[${j}]`);
+        });
+    });
+}
+
+// Valida favourites.json completo antes de escribir nada. Las rutas ahí
+// siempre son del tipo "galeria/fichero", nunca nombres sueltos.
+function validateFavourites(favourites) {
+    if (!Array.isArray(favourites)) {
+        throw new Error('favourites debe ser un array');
+    }
+    favourites.forEach((entry, i) => {
+        validateImageEntry('favourites', entry, `favourites[${i}]`);
+    });
 }
 
 // Routes
@@ -94,11 +193,18 @@ app.post('/api/save', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
             const { galleries, favourites } = req.body;
-            if (galleries) await writeJsonFile('galleries.json', galleries);
-            if (favourites) await writeJsonFile('favourites.json', favourites);
+            // Validar TODO antes de escribir NADA: un guardado parcial (p.ej.
+            // galleries.json válido pero favourites.json corrupto) sería peor
+            // que rechazar la petición entera, porque el frontend confía en
+            // que estos dos ficheros son datos bien formados.
+            if (galleries !== undefined) validateGalleries(galleries);
+            if (favourites !== undefined) validateFavourites(favourites);
+
+            if (galleries !== undefined) await writeJsonFile('galleries.json', galleries);
+            if (favourites !== undefined) await writeJsonFile('favourites.json', favourites);
             res.json({ success: true });
         } catch (e) {
-            res.status(500).json({ error: e.message });
+            res.status(400).json({ error: e.message });
         }
     });
 });
