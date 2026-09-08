@@ -171,11 +171,15 @@
    Favourites Mosaic
    ========================================================================== */
 .mosaic-grid {
+  --mosaic-gap: calc(var(--space-sm) * 2 / 3);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 10px;
+  /* 1px row unit: masonry spans quantise to ~1px instead of 20px.
+     Vertical spacing comes from .photo-item margin-bottom, not row-gap. */
+  grid-auto-rows: 1px;
   grid-auto-flow: dense;
-  gap: calc(var(--space-sm) * 2 / 3);
+  row-gap: 0;
+  column-gap: var(--mosaic-gap);
   padding: 0;
   align-items: start;
   opacity: 0;
@@ -189,25 +193,18 @@
 @media (max-width: 1440px) {
   .mosaic-grid {
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 10px;
   }
 }
 
 @media (max-width: 1024px) {
   .mosaic-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 10px;
-  }
-  .mosaic-grid .photo-item--wide,
-  .mosaic-grid .photo-item--featured {
-    grid-column: auto;
   }
 }
 
 @media (max-width: 600px) {
   .mosaic-grid {
     grid-template-columns: 1fr;
-    grid-auto-rows: 10px;
   }
 }
 
@@ -216,6 +213,7 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
   height: auto;
+  margin-bottom: var(--mosaic-gap);
 }
 
 /* Modifier classes for grid spans */
@@ -226,11 +224,20 @@
   grid-column: span 2;
 }
 
+/* Below 3 columns a span-2 item would eat the whole row: reset it.
+   Must stay after the modifiers above - same specificity, source order wins. */
+@media (max-width: 1024px) {
+  .mosaic-grid .photo-item--wide,
+  .mosaic-grid .photo-item--featured {
+    grid-column: auto;
+  }
+}
+
 /* Classic 3-Column Mode Overrides */
 .mosaic-grid.is-classic {
   display: block;
   column-count: 4;
-  column-gap: calc(var(--space-sm) * 2 / 3);
+  column-gap: var(--mosaic-gap);
 }
 
 @media (max-width: 1440px) {
@@ -254,7 +261,6 @@
 .mosaic-grid.is-classic .photo-item {
   display: inline-block;
   width: 100%;
-  margin-bottom: calc(var(--space-sm) * 2 / 3);
   grid-row-end: auto !important; /* Override JS masonry spans */
   height: auto;
 }
@@ -262,15 +268,6 @@
 .mosaic-grid.is-classic .photo-item img {
   object-fit: contain;
   height: auto;
-}
-
-@media (max-width: 600px) {
-  /* On 1 column, reset spans */
-  .mosaic-grid .photo-item--wide,
-  .mosaic-grid .photo-item--tall,
-  .mosaic-grid .photo-item--featured {
-    grid-column: auto;
-  }
 }
 
 .mosaic-grid .photo-item img {

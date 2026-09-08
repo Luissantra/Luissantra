@@ -92,19 +92,15 @@ function resizeAllGridItems(container) {
   if (!grid || grid.classList.contains('is-classic')) return;
 
   const items = grid.querySelectorAll('.photo-item');
-  
-  const rowHeight = 10;
-  const gapStr = window.getComputedStyle(grid).getPropertyValue('row-gap');
-  const rowGap = parseInt(gapStr) || 0;
-  
-  let columnsCount = 4;
-  if (window.innerWidth <= 600) {
-    columnsCount = 1;
-  } else if (window.innerWidth <= 1024) {
-    columnsCount = 2;
-  } else if (window.innerWidth <= 1440) {
-    columnsCount = 3;
-  }
+
+  // Read the layout constants from CSS so the breakpoints live in exactly one
+  // place. grid-auto-rows is the quantisation unit for the masonry spans.
+  const gridStyle = window.getComputedStyle(grid);
+  const rowHeight = parseFloat(gridStyle.gridAutoRows) || 1;
+  const rowGap = parseFloat(gridStyle.rowGap) || 0;
+  const columnGap = parseFloat(gridStyle.columnGap) || 0;
+  const columnsCount = gridStyle.gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+
   const gridClientWidth = grid.clientWidth;
   const parentClientWidth = grid.parentElement ? grid.parentElement.clientWidth : 0;
   const containerClientWidth = (container && container.clientWidth) || 0;
@@ -118,11 +114,14 @@ function resizeAllGridItems(container) {
 
     if (itemWidth === 0) {
       const containerWidth = gridClientWidth || parentClientWidth || containerClientWidth || window.innerWidth;
-      const totalGapsWidth = (columnsCount - 1) * rowGap;
+      const totalGapsWidth = (columnsCount - 1) * columnGap;
       const baseColWidth = Math.max(0, (containerWidth - totalGapsWidth) / columnsCount);
-      const isWide = item.classList.contains('photo-item--wide') || item.classList.contains('photo-item--featured');
-      const itemSpan = (isWide && columnsCount > 1) ? 2 : 1;
-      itemWidth = baseColWidth * itemSpan + (itemSpan > 1 ? rowGap : 0);
+      // Ask the cascade whether this item actually spans two columns: the
+      // media queries drop wide/featured back to a single column on narrow
+      // viewports, so the class alone is not enough.
+      const spansTwo = window.getComputedStyle(item).gridColumnEnd === 'span 2';
+      const itemSpan = spansTwo ? 2 : 1;
+      itemWidth = baseColWidth * itemSpan + (itemSpan > 1 ? columnGap : 0);
     }
 
     let ratio = 0;
@@ -157,13 +156,19 @@ function resizeAllGridItems(container) {
     }
 
     const calculatedHeight = itemWidth * ratio;
-    return { calculatedHeight };
+    // The item's own bottom margin provides the vertical gutter, so it has to
+    // be part of the span or rows overlap the following item.
+    const marginBottom = parseFloat(window.getComputedStyle(item).marginBottom) || 0;
+    return { calculatedHeight, marginBottom };
   });
 
   items.forEach((item, i) => {
-    const { calculatedHeight } = measurements[i];
+    const { calculatedHeight, marginBottom } = measurements[i];
     if (calculatedHeight > 0) {
-      const rowSpan = Math.ceil((calculatedHeight + rowGap) / (rowHeight + rowGap));
+      // +1 row of slack absorbs sub-pixel rounding in the ratio estimate; with a
+      // 1px row unit that is invisible, and without it items can overlap by ~1px.
+      const outerHeight = calculatedHeight + marginBottom;
+      const rowSpan = Math.max(1, Math.ceil((outerHeight + rowGap) / (rowHeight + rowGap)) + 1);
       item.style.gridRowEnd = `span ${rowSpan}`;
       item.style.containIntrinsicSize = 'auto none auto ' + Math.round(calculatedHeight) + 'px';
     }
