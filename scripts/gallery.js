@@ -1,5 +1,6 @@
 import { setupLightbox, initLightbox } from './lightbox.js';
 import { loadImageSizes, imageAttrs } from './images.js';
+import { esc } from './dom.js';
 
 let resizeController = null;
 
@@ -44,8 +45,8 @@ export async function initGalleryPage() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
           Back to Home
         </a>
-        <h1>${gallery.title}</h1>
-        <p>${gallery.description}</p>
+        <h1>${esc(gallery.title)}</h1>
+        <p>${esc(gallery.description)}</p>
       </div>
       <div class="photos-grid">
         ${gallery.images.map((img, i) => {
@@ -53,7 +54,7 @@ export async function initGalleryPage() {
           const attrs = imageAttrs(rel, sizesMap, '(max-width: 1200px) 100vw, 1200px');
           return `
           <div class="photo-item is-loading" data-index="${i}" tabindex="0">
-            <img ${attrs} alt="${gallery.title} photo ${i + 1}" loading="lazy">
+            <img ${attrs} alt="${esc(gallery.title)} photo ${i + 1}" loading="lazy">
           </div>
         `;
         }).join('')}
@@ -218,8 +219,8 @@ function renderFavouritesGallery(galleries, container, sizesMap) {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         Back to Home
       </a>
-      <h1>${favGallery.title}</h1>
-      <p>${favGallery.description}</p>
+      <h1>${esc(favGallery.title)}</h1>
+      <p>${esc(favGallery.description)}</p>
       <div style="margin-top: 1.5rem;">
         <button id="toggle-mosaic-mode" class="nav-link layout-toggle-btn" aria-pressed="false">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
@@ -233,7 +234,7 @@ function renderFavouritesGallery(galleries, container, sizesMap) {
         const attrs = imageAttrs(f.rel, sizesMap, '(max-width: 600px) 100vw, (max-width: 1024px) 50vw, (max-width: 1440px) 33vw, 25vw');
         return `
         <div class="photo-item is-loading" data-index="${i}" data-featured="${f.featured ? 'true' : 'false'}" tabindex="0" style="view-transition-name: photo-${i};">
-          <img ${attrs} alt="${f.alt}" loading="lazy">
+          <img ${attrs} alt="${esc(f.alt)}" loading="lazy">
         </div>
       `;
       }).join('')}

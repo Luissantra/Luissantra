@@ -1,5 +1,6 @@
 import { setIsNavigating } from './ui.js';
 import { loadImageSizes, imageAttrs } from './images.js';
+import { esc } from './dom.js';
 
 let carouselIntervalId = null;
 
@@ -173,11 +174,11 @@ function renderGalleryCard(gallery, index, sizesMap) {
   return `
     <a href="gallery.html?id=${gallery.id}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${index * 100}ms">
       <div class="gallery-card__image-wrapper">
-        <img class="gallery-card__image" ${attrs} alt="${gallery.title} cover image" loading="lazy">
+        <img class="gallery-card__image" ${attrs} alt="${esc(gallery.title)} cover image" loading="lazy">
       </div>
       <div class="gallery-card__info">
-        <h3 class="gallery-card__title">${gallery.title}</h3>
-        <p class="gallery-card__desc">${gallery.description}</p>
+        <h3 class="gallery-card__title">${esc(gallery.title)}</h3>
+        <p class="gallery-card__desc">${esc(gallery.description)}</p>
       </div>
     </a>
   `;
