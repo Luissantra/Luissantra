@@ -40,7 +40,7 @@ export async function initHomePage() {
         <div class="gallery-grid" style="margin-bottom: var(--space-xl)">
           <a href="gallery.html?id=favourites" class="gallery-card fade-in-up" data-layout="featured-banner">
             <div id="fav-wrapper" class="gallery-card__image-wrapper">
-              <img class="gallery-card__image fav-carousel-img" src="${favCover}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="position: absolute; top: 0; left: 0; transition: opacity 0.5s ease, transform var(--transition-slow);">
+              <img class="gallery-card__image fav-carousel-img" src="${esc(favCover)}" alt="Favourites cover image" loading="lazy" width="1200" height="500" style="position: absolute; top: 0; left: 0; transition: opacity 0.5s ease, transform var(--transition-slow);">
             </div>
             <div class="gallery-card__info">
               <h3 class="gallery-card__title">Favourites</h3>
