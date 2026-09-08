@@ -34,8 +34,11 @@ Medición real sobre `images/japan/japan-13.webp` (1920x1280, 309KB):
 | 640 | 18KB |
 
 En escritorio a 1512px el mosaico pinta cada foto en un hueco de 326px y descarga los 309KB.
-Con la variante de 640px son 18KB, 17 veces menos.
-La galería de Favourites tiene 56 fotos: pasa de ~17MB a ~1MB en la primera vista.
+
+Medido en navegador real tras implementarlo: con una pantalla Retina (DPR 2) el navegador pide 756px de píxeles reales para ese hueco de 378px CSS, así que elige la variante de 1280px, no la de 640px.
+La galería de Favourites pasa de ~17MB a ~4.5MB en la primera vista, un factor de 3.8.
+En una pantalla sin Retina (DPR 1) sí elige la de 640px y el factor es de 17.
+La estimación inicial de este plan asumía DPR 1 y se quedaba corta.
 
 El repositorio tiene 275 webp y 54MB. Las variantes añaden unos 27MB.
 
