@@ -19,15 +19,22 @@ function variantSrc(relSrc, width) {
   return `images/${relSrc.slice(0, dot)}-${width}w${relSrc.slice(dot)}`;
 }
 
+// Escapa comillas dobles para prevenir inyección XSS en atributos HTML.
+// Necesario porque las rutas en data/galleries.json y data/favourites.json
+// se escriben sin validar desde POST /api/save.
+function escapeAttrValue(str) {
+  return str.replace(/"/g, '&quot;');
+}
+
 // relSrc es una ruta relativa a images/, del tipo "japan/japan-13.webp".
 export function imageAttrs(relSrc, sizesMap, sizesAttr) {
-  const src = `images/${relSrc}`;
+  const src = `images/${escapeAttrValue(relSrc)}`;
   const dim = sizesMap && sizesMap[relSrc];
   if (!dim) return `src="${src}"`;
 
   const candidates = VARIANT_WIDTHS
     .filter(w => w < dim.w)
-    .map(w => `${variantSrc(relSrc, w)} ${w}w`);
+    .map(w => `${escapeAttrValue(variantSrc(relSrc, w))} ${w}w`);
   candidates.push(`${src} ${dim.w}w`);
 
   return `src="${src}" srcset="${candidates.join(', ')}" sizes="${sizesAttr}" width="${dim.w}" height="${dim.h}"`;
