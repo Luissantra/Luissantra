@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs/promises');
 const { spawn } = require('child_process');
 const { safeSegment, safeFilename } = require('./scripts/lib/safe-path');
+const { VARIANT_WIDTHS, variantName } = require('./scripts/lib/variants');
 
 class AsyncQueue {
   constructor() {
@@ -145,9 +146,16 @@ app.post('/api/photo/delete', async (req, res) => {
                     await writeJsonFile('galleries.json', galleriesData);
                 }
             } else {
-                const filePath = path.join(__dirname, 'images', galleryId, photo);
-                try { await fs.unlink(filePath); } catch(e) { console.log("File not found to delete:", filePath); }
-                
+                const targets = [photo, ...VARIANT_WIDTHS.map(w => variantName(photo, w))];
+                for (const name of targets) {
+                    const filePath = path.join(__dirname, 'images', galleryId, name);
+                    try {
+                        await fs.unlink(filePath);
+                    } catch (e) {
+                        if (e.code !== 'ENOENT') console.log('No se pudo borrar:', filePath, e.message);
+                    }
+                }
+
                 const gallery = galleriesData.find(g => g.id === galleryId);
                 if (gallery) {
                     gallery.images = gallery.images.filter(img => img !== photo);
