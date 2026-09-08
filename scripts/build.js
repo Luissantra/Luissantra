@@ -1,6 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 const sharp = require('sharp');
+const { mergeSizes, SIZES_FILE } = require('./lib/image-sizes');
 
 const IMAGES_DIR = path.join(__dirname, '../images');
 const ORIGINALS_DIR = path.join(__dirname, '../originals');
@@ -81,6 +82,7 @@ async function build() {
   }
 
   const galleries = [];
+  const discoveredSizes = {};
   const folders = await fs.readdir(IMAGES_DIR);
 
   for (const folder of folders) {
@@ -122,7 +124,8 @@ async function build() {
       const originalBackupPath = path.join(originalGalleryDir, file);
 
       if (fileExt.toLowerCase() === '.webp') {
-        return { success: true, file, largeWebpName };
+        const meta = await sharp(filePath).metadata();
+        return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
       }
 
       try {
@@ -136,7 +139,8 @@ async function build() {
         // Move original to backup folder
         await fs.rename(filePath, originalBackupPath);
 
-        return { success: true, file, largeWebpName };
+        const meta = await sharp(largePath).metadata();
+        return { success: true, file, largeWebpName, width: meta.width, height: meta.height };
       } catch (err) {
         console.error(`  Error processing ${file}:`, err);
         return { success: false, file };
@@ -148,6 +152,9 @@ async function build() {
     for (const result of results) {
       if (result.success) {
         processedImages.push(result.largeWebpName);
+        if (result.width && result.height) {
+          discoveredSizes[`${folder}/${result.largeWebpName}`] = { w: result.width, h: result.height };
+        }
         if (!coverImage) {
           coverImage = `images/${folder}/${result.largeWebpName}`;
         }
@@ -220,6 +227,21 @@ async function build() {
       console.log('No data/favourites.json found, skipping favourites gallery.');
     }
   }
+
+  // Mapa de dimensiones: lo consume el frontend para conocer la relación de
+  // aspecto antes de que la imagen cargue.
+  const sizesPath = path.join(DATA_DIR, SIZES_FILE);
+  let previousSizes = {};
+  try {
+    previousSizes = JSON.parse(await fs.readFile(sizesPath, 'utf-8'));
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.warn(`Warning: no se pudo leer ${SIZES_FILE}, se regenera desde cero.`, err.message);
+    }
+  }
+  const sizes = mergeSizes(previousSizes, discoveredSizes);
+  await fs.writeFile(sizesPath, JSON.stringify(sizes, null, 2));
+  console.log(`Wrote ${Object.keys(sizes).length} image sizes to ${sizesPath}`);
 
   // Write the JSON data file
   const jsonPath = path.join(DATA_DIR, 'galleries.json');
