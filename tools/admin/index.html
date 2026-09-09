@@ -25,6 +25,16 @@
     <main>
         <div class="main-header">
             <h2 id="current-gallery-title">Selecciona una galería</h2>
+            <label id="platform-field" class="platform-field hidden">
+                Consola
+                <select id="platform-select" onchange="setPlatform(this.value)">
+                    <option value="">Ninguna</option>
+                    <option value="ps5">PS5</option>
+                    <option value="ps4">PS4</option>
+                    <option value="switch-2">Switch 2</option>
+                    <option value="switch">Switch</option>
+                </select>
+            </label>
         </div>
         
         <div class="content">

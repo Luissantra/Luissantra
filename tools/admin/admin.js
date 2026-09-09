@@ -1,4 +1,4 @@
-let apiData = { galleries: [], favourites: [], availableFolders: [] };
+let apiData = { galleries: [], favourites: [], availableFolders: [], meta: [] };
 let currentGalleryId = null;
 let sortableInstance = null;
 let sidebarSortable = null;
@@ -98,6 +98,7 @@ function updateGalleryOrder() {
     });
     
     apiData.galleries = newGalleries;
+    syncMetaOrder();
     saveOrder().then(() => {
         renderSidebar();
     });
@@ -112,7 +113,8 @@ function loadGallery(id) {
     
     const gallery = apiData.galleries.find(g => g.id === id);
     document.getElementById('current-gallery-title').innerText = gallery ? gallery.title : id;
-    
+    renderPlatformField(id);
+
     const uploadSection = document.getElementById('upload-section');
     if (id === 'favourites') {
         uploadSection.classList.add('hidden');
@@ -227,12 +229,62 @@ function updateLocalDataFromGrid() {
     saveOrder();
 }
 
+// El orden de la home vive ahora en gallery-meta.json, así que reordenar la
+// barra lateral tiene que reordenar también el meta. Se reconstruye siguiendo
+// el nuevo orden de galerías; las entradas cuya carpeta ya no aparece en
+// galleries.json se conservan al final, para no perder la consola de una
+// carpeta que todavía está vacía y aún no ha entrado en el build.
+function syncMetaOrder() {
+    const meta = Array.isArray(apiData.meta) ? apiData.meta : [];
+    const byId = new Map(meta.map(entry => [entry.id, entry]));
+    const ordered = [];
+    apiData.galleries.forEach(g => {
+        if (g.id === 'favourites') return;
+        ordered.push(byId.get(g.id) || { id: g.id, category: g.category || 'in-game' });
+        byId.delete(g.id);
+    });
+    byId.forEach(entry => ordered.push(entry));
+    apiData.meta = ordered;
+}
+
+// El selector solo tiene sentido en galerías in-game. Favourites es sintética
+// y las de photography no llevan consola.
+function renderPlatformField(id) {
+    const field = document.getElementById('platform-field');
+    const select = document.getElementById('platform-select');
+    const gallery = apiData.galleries.find(g => g.id === id);
+    const isInGame = id !== 'favourites' && (!gallery || gallery.category !== 'photography');
+    field.classList.toggle('hidden', !isInGame);
+    if (!isInGame) return;
+    const entry = (apiData.meta || []).find(m => m.id === id);
+    select.value = entry && entry.platform ? entry.platform : '';
+}
+
+function setPlatform(value) {
+    if (!currentGalleryId || currentGalleryId === 'favourites') return;
+    if (!Array.isArray(apiData.meta)) apiData.meta = [];
+    let entry = apiData.meta.find(m => m.id === currentGalleryId);
+    if (!entry) {
+        const gallery = apiData.galleries.find(g => g.id === currentGalleryId);
+        entry = { id: currentGalleryId, category: (gallery && gallery.category) || 'in-game' };
+        apiData.meta.push(entry);
+    }
+    // Ninguna se guarda quitando la clave, no poniéndola a null: el meta debe
+    // quedar lo más limpio posible porque se edita también a mano.
+    if (value) {
+        entry.platform = value;
+    } else {
+        delete entry.platform;
+    }
+    saveOrder();
+}
+
 async function saveOrder() {
     try {
         const res = await fetch('/api/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ galleries: apiData.galleries, favourites: apiData.favourites })
+            body: JSON.stringify({ galleries: apiData.galleries, favourites: apiData.favourites, meta: apiData.meta })
         });
         if (res.ok) {
             showToast("Orden guardado. (No olvides hacer Build al terminar)", "success");
