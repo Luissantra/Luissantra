@@ -510,10 +510,12 @@
 }
 
 /* Insignia de consola.
-   PROVISIONAL: el aspecto definitivo está pendiente de decisión. Este estilo
-   es deliberadamente neutro y solo reserva el sitio y la jerarquía. El atributo
-   data-platform ya está en el marcado, así que el diseño final puede
-   diferenciar por consola sin tocar el JS. */
+   Insignia tipográfica monocroma: texto en Silkscreen (--font-gaming) dentro de
+   un contorno sin relleno, igual para las cuatro consolas. Evita los logos de
+   PlayStation y Nintendo, que son marcas registradas, y reutiliza el mismo
+   lenguaje de contorno que los chips de filtro de la home. El atributo
+   data-platform sigue en el marcado por si una revisión futura quiere
+   diferenciar por consola solo en CSS. */
 .platform-badge {
   display: inline-block;
   margin-top: var(--space-xs);
