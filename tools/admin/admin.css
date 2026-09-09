@@ -82,3 +82,30 @@ dialog input:focus { border-color: #0070f3; }
 
 .hidden { display: none !important; }
 .ghost { opacity: 0.4; }
+
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.platform-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #aaa;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.platform-field select {
+    background: #1f1f1f;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font: inherit;
+    cursor: pointer;
+}

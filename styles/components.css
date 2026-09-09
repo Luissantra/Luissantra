@@ -436,3 +436,94 @@
 #theme-icon-container.is-entering {
   animation: theme-icon-enter 150ms ease-out forwards;
 }
+
+/* ==========================================================================
+   Console Filter Chips
+   ========================================================================== */
+.platform-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  max-width: 1200px;
+  margin: 0 auto var(--space-md);
+}
+
+.platform-chip {
+  font-family: var(--font-gaming);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.platform-chip:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.platform-chip[aria-pressed="true"] {
+  color: var(--color-bg);
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.platform-chip__count {
+  opacity: 0.6;
+  margin-left: 0.35em;
+}
+
+.load-more-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+}
+
+.load-more {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.load-more:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-text-muted);
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  padding: var(--space-md);
+}
+
+/* Insignia de consola.
+   Insignia tipográfica monocroma: texto en Silkscreen (--font-gaming) dentro de
+   un contorno sin relleno, igual para las cuatro consolas. Evita los logos de
+   PlayStation y Nintendo, que son marcas registradas, y reutiliza el mismo
+   lenguaje de contorno que los chips de filtro de la home. El atributo
+   data-platform sigue en el marcado por si una revisión futura quiere
+   diferenciar por consola solo en CSS. */
+.platform-badge {
+  display: inline-block;
+  margin-top: var(--space-xs);
+  font-family: var(--font-gaming);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.2em 0.6em;
+}

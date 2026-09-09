@@ -1,8 +1,18 @@
 import { setIsNavigating } from './ui.js';
 import { loadImageSizes, imageAttrs } from './images.js';
 import { esc } from './dom.js';
+import { PLATFORM_ORDER, PLATFORM_LABELS, platformOf, platformBadge } from './platforms.js';
 
 let carouselIntervalId = null;
+
+const PAGE_SIZE = 10;
+
+// Estado de la sección In-Game. Vive a nivel de módulo porque la sección se
+// repinta sola al filtrar o al cargar más, sin volver a montar la home entera.
+let inGameGalleries = [];
+let inGameSizesMap = null;
+let activePlatform = null; // null significa "All"
+let shownCount = PAGE_SIZE;
 
 export async function initHomePage() {
   const container = document.getElementById('galleries-container');
@@ -64,19 +74,28 @@ export async function initHomePage() {
     }
 
     if (inGame.length > 0) {
+      inGameGalleries = inGame;
+      inGameSizesMap = sizesMap;
+      readUrlState();
       html += `
-        <section class="category-section">
+        <section class="category-section" id="in-game-section">
           <div id="section-in-game" class="scroll-anchor"></div>
           <h2 class="section-title gaming fade-in-up">In-Game Photography</h2>
-          <div class="gallery-grid">
-            ${inGame.map((g, i) => renderGalleryCard(g, i, sizesMap)).join('')}
-          </div>
+          <div id="platform-chips" class="platform-chips" role="group" aria-label="Filter galleries by console"></div>
+          <div id="in-game-status" class="visually-hidden" aria-live="polite"></div>
+          <div class="gallery-grid" id="in-game-grid"></div>
+          <div id="load-more-wrapper" class="load-more-wrapper"></div>
         </section>
       `;
     }
 
     container.innerHTML = html;
-    
+
+    if (inGameGalleries.length > 0) {
+      renderInGameSection();
+      initInGameControls();
+    }
+
     if (carouselIntervalId) {
       clearInterval(carouselIntervalId);
     }
@@ -170,18 +189,137 @@ function renderGalleryCard(gallery, index, sizesMap) {
   const layout = index % 2 === 0 ? 'horizontal-left' : 'horizontal-right';
   const rel = gallery.coverImage.replace(/^images\//, '');
   const attrs = imageAttrs(rel, sizesMap, '(max-width: 768px) 100vw, 50vw');
+  // Se topa el retardo: con 22 tarjetas, index * 100ms daría 2,2 s de cascada
+  // y al cambiar de filtro la sección se sentiría lenta.
+  const delay = Math.min(index, 6) * 100;
 
   return `
-    <a href="gallery.html?id=${esc(gallery.id)}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${index * 100}ms">
+    <a href="gallery.html?id=${esc(gallery.id)}" class="gallery-card fade-in-up" data-layout="${layout}" style="animation-delay: ${delay}ms">
       <div class="gallery-card__image-wrapper">
         <img class="gallery-card__image" ${attrs} alt="${esc(gallery.title)} cover image" loading="lazy">
       </div>
       <div class="gallery-card__info">
         <h3 class="gallery-card__title">${esc(gallery.title)}</h3>
         <p class="gallery-card__desc">${esc(gallery.description)}</p>
+        ${platformBadge(gallery)}
       </div>
     </a>
   `;
+}
+
+// Los chips solo se dibujan para consolas con al menos una galería: un chip
+// "Switch (0)" sería ruido, y hoy no hay ninguna galería de Switch 1.
+function renderChips() {
+  const counts = new Map();
+  inGameGalleries.forEach(g => {
+    const p = platformOf(g);
+    if (p) counts.set(p, (counts.get(p) || 0) + 1);
+  });
+
+  const chips = [{ value: '', label: 'All', count: inGameGalleries.length }];
+  PLATFORM_ORDER.forEach(p => {
+    if (counts.has(p)) {
+      chips.push({ value: p, label: PLATFORM_LABELS[p], count: counts.get(p) });
+    }
+  });
+
+  return chips.map(chip => `
+    <button type="button" class="platform-chip" data-platform="${esc(chip.value)}" aria-pressed="${(chip.value || null) === activePlatform}">
+      ${esc(chip.label)} <span class="platform-chip__count">${chip.count}</span>
+    </button>
+  `).join('');
+}
+
+function renderInGameSection() {
+  const chips = document.getElementById('platform-chips');
+  const grid = document.getElementById('in-game-grid');
+  const status = document.getElementById('in-game-status');
+  const moreWrapper = document.getElementById('load-more-wrapper');
+  if (!chips || !grid || !status || !moreWrapper) return;
+
+  const visible = activePlatform
+    ? inGameGalleries.filter(g => platformOf(g) === activePlatform)
+    : inGameGalleries;
+  const page = visible.slice(0, shownCount);
+
+  chips.innerHTML = renderChips();
+  grid.innerHTML = page.length > 0
+    ? page.map((g, i) => renderGalleryCard(g, i, inGameSizesMap)).join('')
+    : '<p class="empty-state">No galleries for this console yet.</p>';
+
+  const remaining = visible.length - page.length;
+  moreWrapper.innerHTML = remaining > 0
+    ? `<button type="button" class="load-more" id="load-more">Load more (${remaining})</button>`
+    : '';
+  status.textContent = `Showing ${page.length} of ${visible.length} galleries`;
+}
+
+// Delegación: la rejilla y los chips se reescriben en cada repintado, así que
+// escuchar en la sección evita tener que reenganchar handlers cada vez.
+function initInGameControls() {
+  const section = document.getElementById('in-game-section');
+  if (!section) return;
+
+  section.addEventListener('click', (e) => {
+    const chip = e.target.closest('.platform-chip');
+    if (chip) {
+      const value = chip.dataset.platform || null;
+      if (value === activePlatform) return;
+      activePlatform = value;
+      shownCount = PAGE_SIZE;
+      // pushState: el botón atrás debe recorrer los filtros.
+      syncUrl(true);
+      renderInGameSection();
+      return;
+    }
+
+    const more = e.target.closest('#load-more');
+    if (more) {
+      const previousCount = shownCount;
+      shownCount += PAGE_SIZE;
+      // replaceState: el botón atrás NO debe replegar la lista, sería
+      // desconcertante volver a ver 10 tras haber pedido 20.
+      syncUrl(false);
+      renderInGameSection();
+      focusCardAt(previousCount);
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    readUrlState();
+    renderInGameSection();
+  });
+}
+
+// Tras "Load more", el foco salta a la primera tarjeta nueva para que quien
+// navega por teclado no acabe al principio de la lista otra vez. Las tarjetas
+// son enlaces, así que ya son focusables.
+function focusCardAt(index) {
+  const cards = document.querySelectorAll('#in-game-grid .gallery-card');
+  if (cards[index]) cards[index].focus();
+}
+
+function syncUrl(push) {
+  const params = new URLSearchParams(window.location.search);
+  if (activePlatform) params.set('platform', activePlatform);
+  else params.delete('platform');
+  if (shownCount > PAGE_SIZE) params.set('shown', String(shownCount));
+  else params.delete('shown');
+
+  const query = params.toString();
+  const url = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+  const state = { platform: activePlatform, shown: shownCount };
+  if (push) history.pushState(state, '', url);
+  else history.replaceState(state, '', url);
+}
+
+function readUrlState() {
+  const params = new URLSearchParams(window.location.search);
+  const platform = params.get('platform');
+  // Un valor desconocido cae a "All" en vez de dejar la rejilla vacía.
+  activePlatform = PLATFORM_ORDER.includes(platform) ? platform : null;
+  const shown = parseInt(params.get('shown'), 10);
+  shownCount = Number.isFinite(shown) && shown >= PAGE_SIZE ? shown : PAGE_SIZE;
 }
 
 export function initSectionKeyNav() {
