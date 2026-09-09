@@ -402,8 +402,11 @@ app.get('/admin', (req, res) => {
 // llega aquí vía next(err). Sin este middleware, Express cae en su manejador por defecto:
 // HTML 500 con la traza completa, incluidas rutas absolutas del servidor. Debe ir
 // registrado después de todas las rutas y antes de app.listen.
+// El código de estado respeta err.status/err.statusCode cuando el error ya trae uno
+// (por ejemplo el NotFoundError de res.sendFile, que es un 404 real): sin esto, un
+// fichero servido con sendFile que no se encuentra se reportaba como 500 en vez de 404.
 app.use((err, req, res, next) => {
-    res.status(500).json({ error: err.message });
+    res.status(err.status || err.statusCode || 500).json({ error: err.message });
 });
 
 // Start Server
