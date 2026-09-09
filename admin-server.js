@@ -11,6 +11,7 @@ const {
   dedupeFilename
 } = require('./scripts/lib/safe-path');
 const { VARIANT_WIDTHS, variantName } = require('./scripts/lib/variants');
+const { META_FILE, validateMeta } = require('./scripts/lib/gallery-meta');
 
 class AsyncQueue {
   constructor() {
@@ -175,14 +176,15 @@ app.get('/api/data', async (req, res) => {
     try {
         const galleriesData = await readJsonFile('galleries.json');
         const favouritesData = await readJsonFile('favourites.json');
-        
+        const metaData = await readJsonFile(META_FILE);
+
         // Also get list of folders in images/
         const folders = await fs.readdir(path.join(__dirname, 'images'), { withFileTypes: true });
         const availableFolders = folders
             .filter(dirent => dirent.isDirectory() && dirent.name !== 'favourites')
             .map(dirent => dirent.name);
 
-        res.json({ galleries: galleriesData, favourites: favouritesData, availableFolders });
+        res.json({ galleries: galleriesData, favourites: favouritesData, availableFolders, meta: metaData });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -192,16 +194,18 @@ app.get('/api/data', async (req, res) => {
 app.post('/api/save', async (req, res) => {
     dbQueue.enqueue(async () => {
         try {
-            const { galleries, favourites } = req.body;
+            const { galleries, favourites, meta } = req.body;
             // Validar TODO antes de escribir NADA: un guardado parcial (p.ej.
             // galleries.json válido pero favourites.json corrupto) sería peor
             // que rechazar la petición entera, porque el frontend confía en
-            // que estos dos ficheros son datos bien formados.
+            // que estos ficheros son datos bien formados.
             if (galleries !== undefined) validateGalleries(galleries);
             if (favourites !== undefined) validateFavourites(favourites);
+            if (meta !== undefined) validateMeta(meta);
 
             if (galleries !== undefined) await writeJsonFile('galleries.json', galleries);
             if (favourites !== undefined) await writeJsonFile('favourites.json', favourites);
+            if (meta !== undefined) await writeJsonFile(META_FILE, meta);
             res.json({ success: true });
         } catch (e) {
             res.status(400).json({ error: e.message });
