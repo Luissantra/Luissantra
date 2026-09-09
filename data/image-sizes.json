@@ -1,4 +1,668 @@
 {
+  "alan-wake-2/alan-wake-2-20250222125012.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250223225547.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250223225929.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224221359.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224222838.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224223541.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224224704.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224225647.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250224230324.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "alan-wake-2/alan-wake-2-20250426195528.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240921175932.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240921181804.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240921183423.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240922123133.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240922181415.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240922184507.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240922185536.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240922211026.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240926204142.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240927161124.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20240929200003.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241001212705.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241001224928.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241001230520.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241002224201.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241002224648.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241002225358.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241006235311.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241011000016.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241011002241.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241011170344.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012000232.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012001904.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012001922.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012002113.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012003027.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012125612.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012125838.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012130234.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012133557.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012134030.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012134051.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012134207.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012134228.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241012162453.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "astro-bot/astro-bot-20241214162815.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20220216180940.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20220305234248.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20220305234648.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20220305235911.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231027161131.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231028172339.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231028174938.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116155623.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116165813.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116171243.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116173057.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116173116.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116173215.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116173631.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116173651.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "ciberpunk-2077/cyberpunk-2077-20231116174055.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260112224343.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260117155245.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260125170311.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260125170408.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260127230346.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260207121116.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260207121941.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260207122718.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260207125022.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260207125548.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260208191324.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260208214011.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260209223719.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "clair-obscur/clair-obscur-expedition-33-20260209223757.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110163427.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110163823.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110164823.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110164920.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110165514.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110165949.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110170115.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110170432.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110173741.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110173839.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110180500.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110181207.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110181418.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110181720.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110181830.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110203742.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110205245.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110213046.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110220444.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110225543.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211110235441.webp": {
+    "w": 1920,
+    "h": 3413
+  },
+  "demons-souls/demon-s-souls-20211113013029.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211113231944.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211114205839.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211114212323.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211142714.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143149.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143327.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143349.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143415.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143543.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211211143839.webp": {
+    "w": 1920,
+    "h": 3413
+  },
+  "demons-souls/demon-s-souls-20211211210643.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211217155612.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211218115408.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211218115605.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211218115614.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220161023.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220161253.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220161427.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220162400.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220163102.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220163713.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220163831.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220164003.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220164131.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220164313.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "demons-souls/demon-s-souls-20211220164427.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091217102300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091217160500-c.webp": {
+    "w": 1080,
+    "h": 1920
+  },
+  "dk-bananza/2025091217191300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091317445200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091319415700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091319423600-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091319431100-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091515373900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025091523051300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025092621410800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025093023312300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025093023351800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025100800005800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025101115160900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025101223210300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025101223285400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025101223295500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025101323323900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102123105800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102300113400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102300131700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102322155500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102322290200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102323044600-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102323132900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102416253300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102515464700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102516033800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102622585900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dk-bananza/2025102623053900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "dredge/2025122413421500-c.webp": {
+    "w": 1280,
+    "h": 720
+  },
+  "dredge/2025122419451400-c.webp": {
+    "w": 1280,
+    "h": 720
+  },
+  "dredge/2025122814044100-c.webp": {
+    "w": 1280,
+    "h": 720
+  },
+  "elden-ring/elden-ringa-20220312214135.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20220331231903.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20220416125154.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20231229234434.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20240101130415.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20240112150203.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20240127195848.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20240130114234.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "elden-ring/elden-ringa-20240130115219.webp": {
+    "w": 1920,
+    "h": 1080
+  },
   "ghost-of-tsushima/ghost-of-tsushima-01.webp": {
     "w": 1920,
     "h": 1080
@@ -96,6 +760,50 @@
     "h": 1080
   },
   "ghost-of-tsushima/ghost-of-tsushima-caratula.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230318010932.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230709121220.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230710185209.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230711151859.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230712161330.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230712161527.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230712162339.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230712162438.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20230712165649.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20231225135730.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "gow-ragnarok/god-of-war-ragnara-k-20231227111841.webp": {
     "w": 1920,
     "h": 1080
   },
@@ -603,6 +1311,266 @@
     "w": 1920,
     "h": 1280
   },
+  "mario-kart-world/2025060615203600-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025061413045200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025070618301200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025070618320200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816025700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816093800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816105300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816122700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816155900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025071816214100-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025081723571800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025081823032000-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025081823060300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025082820283500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025082820291800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025082820330200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025082820401800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-kart-world/2025083015473100-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025110821564800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025111501460400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025120223120900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025121300052300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025121318441800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025121600142900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025121600223100-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mario-odyssey/2025121600262200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240623170323.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240629192146.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240707180643.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240707185242.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240707185257.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240707192332.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240830133537.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240830141231.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240904203212.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240905121403.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240905121645.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240905171554.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240905173616.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240905174313.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240906141431.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240906142606.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240908203117.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240908203723.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240908210832.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240909131722.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240909134806.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240909160715.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240909164609.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240909164957.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240918232805.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240918233105.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240918233145.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240918233924.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "marvel-spider-man-2/marvel-s-spider-man-2-20240918235953.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628180848.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628181241.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628183330.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628234007.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629005257.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629005845.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629011550.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629011820.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629205224.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260630003202.webp": {
+    "w": 1920,
+    "h": 1080
+  },
   "new-york/new-york-01.webp": {
     "w": 1920,
     "h": 1080
@@ -895,6 +1863,22 @@
     "w": 1920,
     "h": 1080
   },
+  "sekiro/sekiroa-shadows-die-twice-20211223170247.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "sekiro/sekiroa-shadows-die-twice-20211230121158.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "sekiro/sekiroa-shadows-die-twice-20220103192136.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "sekiro/sekiroa-shadows-die-twice-20220103223415.webp": {
+    "w": 1920,
+    "h": 1080
+  },
   "spider-man-miles-morales/spider-man-miles-morales-01.webp": {
     "w": 1920,
     "h": 1080
@@ -1096,6 +2080,90 @@
     "h": 1080
   },
   "the-last-of-us-2/the-last-of-us-2-caratula.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-botw/2025072000194400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-botw/2025072000214000-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026072918195200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073015421900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073015423800-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073015442500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113530400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113530600-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113531000-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113531500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113532400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113533700-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113533900-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113534200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113535501-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113540200-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113540300-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073113540500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073114053400-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073114090500-c.webp": {
+    "w": 1920,
+    "h": 1080
+  },
+  "zelda-totk/2026073115221500-c.webp": {
     "w": 1920,
     "h": 1080
   }
