@@ -1,6 +1,7 @@
 import { setupLightbox, initLightbox } from './lightbox.js';
 import { loadImageSizes, imageAttrs } from './images.js';
 import { esc } from './dom.js';
+import { platformBadge } from './platforms.js';
 
 let resizeController = null;
 
@@ -47,6 +48,7 @@ export async function initGalleryPage() {
         </a>
         <h1>${esc(gallery.title)}</h1>
         <p>${esc(gallery.description)}</p>
+        ${platformBadge(gallery)}
       </div>
       <div class="photos-grid">
         ${gallery.images.map((img, i) => {

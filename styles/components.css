@@ -508,3 +508,20 @@
   text-align: center;
   padding: var(--space-md);
 }
+
+/* Insignia de consola.
+   PROVISIONAL: el aspecto definitivo está pendiente de decisión. Este estilo
+   es deliberadamente neutro y solo reserva el sitio y la jerarquía. El atributo
+   data-platform ya está en el marcado, así que el diseño final puede
+   diferenciar por consola sin tocar el JS. */
+.platform-badge {
+  display: inline-block;
+  margin-top: var(--space-xs);
+  font-family: var(--font-gaming);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.2em 0.6em;
+}
