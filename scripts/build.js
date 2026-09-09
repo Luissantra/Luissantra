@@ -3,6 +3,13 @@ const path = require('path');
 const sharp = require('sharp');
 const { mergeSizes, SIZES_FILE } = require('./lib/image-sizes');
 const { VARIANT_WIDTHS, variantName, isVariant } = require('./lib/variants');
+const {
+  META_FILE,
+  validateMeta,
+  indexMeta,
+  resolveMeta,
+  sortGalleries
+} = require('./lib/gallery-meta');
 
 const IMAGES_DIR = path.join(__dirname, '../images');
 const ORIGINALS_DIR = path.join(__dirname, '../originals');
@@ -49,21 +56,6 @@ function formatTitle(folderName) {
     .join(' ');
 }
 
-// Generate descriptive text based on folder (since we don't have descriptions yet)
-function getDescription(folderName) {
-  if (['japan', 'italy', 'new-york'].includes(folderName)) {
-    return 'Photography - Real World';
-  }
-  return 'In-Game Photography';
-}
-
-function getCategory(folderName) {
-  if (['japan', 'italy', 'new-york'].includes(folderName)) {
-    return 'photography';
-  }
-  return 'in-game';
-}
-
 // Genera las variantes reducidas junto al fichero base. withoutEnlargement
 // evita crear una "variante" mayor que el original en fotos pequeñas.
 async function writeVariants(sourcePath, folderPath, largeWebpName, sourceWidth) {
@@ -96,7 +88,22 @@ async function build() {
     }
   }
 
-  const galleries = [];
+  // El meta es la fuente de verdad del orden, la categoría y la consola. Un
+  // fichero corrupto se propaga en vez de degradarse a vacío: degradar
+  // reordenaría y recategorizaría las 25 galerías en silencio, que es
+  // exactamente el fallo que queremos que sea ruidoso.
+  let meta = [];
+  try {
+    const metaPath = path.join(DATA_DIR, META_FILE);
+    meta = JSON.parse(await fs.readFile(metaPath, 'utf-8'));
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+    console.log(`No data/${META_FILE} found, using defaults for every gallery.`);
+  }
+  validateMeta(meta);
+  const metaById = indexMeta(meta);
+
+  let galleries = [];
   const discoveredSizes = {};
   const folders = await fs.readdir(IMAGES_DIR);
 
@@ -208,17 +215,28 @@ async function build() {
         }
       }
 
-      galleries.push({
+      const resolved = resolveMeta(metaById, folder);
+      const gallery = {
         id: folder,
         title: formatTitle(folder),
-        description: getDescription(folder),
-        category: getCategory(folder),
+        description: resolved.description,
+        category: resolved.category,
         coverImage: coverImage,
         images: processedImages
-      });
+      };
+      // Solo se emite platform cuando existe: una galería de photography no
+      // debe llevar la clave con valor null en galleries.json.
+      if (resolved.platform) gallery.platform = resolved.platform;
+      galleries.push(gallery);
       console.log(`  Processed ${processedImages.length} images for ${folder}`);
     }
   }
+
+  // El orden manual vive en gallery-meta.json. Sin esto, el orden de
+  // fs.readdir se impone y destruye cualquier reordenación hecha en el CMS,
+  // que es el bug que este cambio arregla. Va antes del unshift de favourites
+  // para que la galería sintética siga quedando la primera.
+  galleries = sortGalleries(galleries, metaById);
 
   // Add favourites gallery from data/favourites.json if exists
   try {
