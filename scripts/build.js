@@ -48,8 +48,31 @@ function limitConcurrency(concurrency) {
   };
 }
 
+// Títulos oficiales que el auto-formateo desde el nombre de carpeta no puede
+// reproducir (dos puntos, símbolos, apóstrofos, mayúsculas internas...).
+const TITLE_OVERRIDES = {
+  'cyberpunk-2077': 'Cyberpunk 2077',
+  'clair-obscur': 'Clair Obscur: Expedition 33',
+  'demons-souls': "Demon's Souls",
+  'donkey-kong-bananza': 'Donkey Kong Bananza',
+  'ghost-of-tsushima': 'Ghost of Tsushima',
+  'god-of-war-ragnarok': 'God of War Ragnarök',
+  'super-mario-odyssey': 'Super Mario Odyssey',
+  'marvel-spider-man-2': "Marvel's Spider-Man 2",
+  'mgs-snake-eater': 'Metal Gear Solid Δ: Snake Eater',
+  'ratchet-clank-rift-apart': 'Ratchet & Clank: Rift Apart',
+  'sekiro': 'Sekiro: Shadows Die Twice',
+  'spider-man-miles-morales': "Marvel's Spider-Man: Miles Morales",
+  'the-last-of-us-2': 'The Last of Us Part II',
+  'zelda-breath-of-the-wild': 'The Legend of Zelda: Breath of the Wild',
+  'zelda-tears-of-the-kingdom': 'The Legend of Zelda: Tears of the Kingdom',
+};
+
 // Helper to capitalize titles nicely
 function formatTitle(folderName) {
+  if (TITLE_OVERRIDES[folderName]) {
+    return TITLE_OVERRIDES[folderName];
+  }
   return folderName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

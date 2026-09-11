@@ -397,8 +397,11 @@ app.post('/api/build', (req, res) => {
 });
 
 // Serve the Admin UI
+// Serve the Admin UI. dotfiles:'allow' porque el repo puede vivir bajo una ruta
+// con un segmento oculto (p. ej. un worktree en .claude/worktrees/...); sin esto
+// res.sendFile aplica su default 'ignore' y responde 404 aunque el fichero exista.
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'tools', 'admin', 'index.html'));
+    res.sendFile(path.join(__dirname, 'tools', 'admin', 'index.html'), { dotfiles: 'allow' });
 });
 
 // Manejador de errores centralizado. Los callbacks de multer (destination/filename)
