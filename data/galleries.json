@@ -195,25 +195,30 @@
         "src": "the-last-of-us-2/the-last-of-us-2-03.webp"
       },
       {
-        "src": "alan-wake-2/alan-wake-2-20250224225647.webp"
+        "src": "alan-wake-2/alan-wake-2-20250224225647.webp",
+        "featured": true
       },
       {
         "src": "alan-wake-2/alan-wake-2-20250224230324.webp"
       },
       {
-        "src": "astro-bot/astro-bot-20241002225358.webp"
+        "src": "astro-bot/astro-bot-20241002225358.webp",
+        "featured": true
       },
       {
-        "src": "cyberpunk-2077/cyberpunk-2077-20231116173651.webp"
+        "src": "cyberpunk-2077/cyberpunk-2077-20231116173651.webp",
+        "featured": true
       },
       {
         "src": "cyberpunk-2077/cyberpunk-2077-20231116174055.webp"
       },
       {
-        "src": "clair-obscur/clair-obscur-expedition-33-20260209223719.webp"
+        "src": "clair-obscur/clair-obscur-expedition-33-20260209223719.webp",
+        "featured": true
       },
       {
-        "src": "clair-obscur/clair-obscur-expedition-33-20260208214011.webp"
+        "src": "clair-obscur/clair-obscur-expedition-33-20260208214011.webp",
+        "featured": true
       },
       {
         "src": "clair-obscur/clair-obscur-expedition-33-20260207125548.webp"
@@ -228,10 +233,12 @@
         "src": "demons-souls/demon-s-souls-20211110165514.webp"
       },
       {
-        "src": "demons-souls/demon-s-souls-20211110173839.webp"
+        "src": "demons-souls/demon-s-souls-20211110173839.webp",
+        "featured": true
       },
       {
-        "src": "demons-souls/demon-s-souls-20211110225543.webp"
+        "src": "demons-souls/demon-s-souls-20211110225543.webp",
+        "featured": true
       },
       {
         "src": "demons-souls/demon-s-souls-20211211143839.webp"
@@ -243,13 +250,15 @@
         "src": "demons-souls/demon-s-souls-20211217155612.webp"
       },
       {
-        "src": "donkey-kong-bananza/2025101323323900-c.webp"
+        "src": "donkey-kong-bananza/2025101323323900-c.webp",
+        "featured": true
       },
       {
         "src": "donkey-kong-bananza/2025092621410800-c.webp"
       },
       {
-        "src": "elden-ring/elden-ringa-20220331231903.webp"
+        "src": "elden-ring/elden-ringa-20220331231903.webp",
+        "featured": true
       },
       {
         "src": "god-of-war-ragnarok/god-of-war-ragnara-k-20230712165649.webp"
@@ -261,10 +270,12 @@
         "src": "god-of-war-ragnarok/god-of-war-ragnara-k-20230712161527.webp"
       },
       {
-        "src": "mario-kart-world/2025081723571800-c.webp"
+        "src": "mario-kart-world/2025081723571800-c.webp",
+        "featured": true
       },
       {
-        "src": "mario-kart-world/2025061413045200-c.webp"
+        "src": "mario-kart-world/2025061413045200-c.webp",
+        "featured": true
       },
       {
         "src": "mario-kart-world/2025060615203600-c.webp"
@@ -282,7 +293,8 @@
         "src": "super-mario-odyssey/2025120223120900-c.webp"
       },
       {
-        "src": "super-mario-odyssey/2025111501460400-c.webp"
+        "src": "super-mario-odyssey/2025111501460400-c.webp",
+        "featured": true
       },
       {
         "src": "super-mario-odyssey/2025121300052300-c.webp"
@@ -291,10 +303,12 @@
         "src": "super-mario-odyssey/2025121600262200-c.webp"
       },
       {
-        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240909164609.webp"
+        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240909164609.webp",
+        "featured": true
       },
       {
-        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240908203723.webp"
+        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240908203723.webp",
+        "featured": true
       },
       {
         "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240906142606.webp"
@@ -306,7 +320,8 @@
         "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240905174313.webp"
       },
       {
-        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240905171554.webp"
+        "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240905171554.webp",
+        "featured": true
       },
       {
         "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240905173616.webp"
@@ -318,7 +333,8 @@
         "src": "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628183330.webp"
       },
       {
-        "src": "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629005845.webp"
+        "src": "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629005845.webp",
+        "featured": true
       },
       {
         "src": "mgs-snake-eater/metal-gear-solid-i-snake-eater-20260629205224.webp"
@@ -346,6 +362,12 @@
       },
       {
         "src": "zelda-tears-of-the-kingdom/2026073113533900-c.webp"
+      },
+      {
+        "src": "cyberpunk-2077/cyberpunk-2077-20231116165813.webp"
+      },
+      {
+        "src": "ghost-of-tsushima/ghost-of-tsushima-caratula.webp"
       }
     ]
   },
@@ -416,7 +438,7 @@
   },
   {
     "id": "clair-obscur",
-    "title": "Clair Obscur",
+    "title": "Clair Obscur: Expedition 33",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/clair-obscur/clair-obscur-expedition-33-20260209223719.webp",
@@ -466,7 +488,7 @@
   },
   {
     "id": "demons-souls",
-    "title": "Demons Souls",
+    "title": "Demon's Souls",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/demons-souls/demon-s-souls-20211110225543.webp",
@@ -567,13 +589,13 @@
     "title": "Dredge",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/dredge/2025122419451400-c.webp",
+    "coverImage": "images/dredge/2025122814044100-c.webp",
     "images": [
-      "2025122419451400-c.webp",
+      "2025122814044100-c.webp",
       "2025122413421500-c.webp",
-      "2025122814044100-c.webp"
+      "2025122419451400-c.webp"
     ],
-    "platform": "ps5"
+    "platform": "switch-2"
   },
   {
     "id": "elden-ring",
@@ -596,7 +618,7 @@
   },
   {
     "id": "ghost-of-tsushima",
-    "title": "Ghost Of Tsushima",
+    "title": "Ghost of Tsushima",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/ghost-of-tsushima/ghost-of-tsushima-caratula.webp",
@@ -627,11 +649,11 @@
       "ghost-of-tsushima-23.webp",
       "ghost-of-tsushima-24.webp"
     ],
-    "platform": "ps5"
+    "platform": "ps4"
   },
   {
     "id": "god-of-war-ragnarok",
-    "title": "God Of War Ragnarok",
+    "title": "God of War Ragnarök",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/god-of-war-ragnarok/god-of-war-ragnara-k-20230712165649.webp",
@@ -824,7 +846,7 @@
   },
   {
     "id": "marvel-spider-man-2",
-    "title": "Marvel Spider Man 2",
+    "title": "Marvel's Spider-Man 2",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/marvel-spider-man-2/marvel-s-spider-man-2-20240909164609.webp",
@@ -863,7 +885,7 @@
   },
   {
     "id": "mgs-snake-eater",
-    "title": "Mgs Snake Eater",
+    "title": "Metal Gear Solid Δ: Snake Eater",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/mgs-snake-eater/metal-gear-solid-i-snake-eater-20260628183330.webp",
@@ -921,7 +943,7 @@
   },
   {
     "id": "ratchet-clank-rift-apart",
-    "title": "Ratchet Clank Rift Apart",
+    "title": "Ratchet & Clank: Rift Apart",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/ratchet-clank-rift-apart/ratchet-clank-rift-apart-caratula.webp",
@@ -985,7 +1007,7 @@
   },
   {
     "id": "sekiro",
-    "title": "Sekiro",
+    "title": "Sekiro: Shadows Die Twice",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/sekiro/sekiroa-shadows-die-twice-20220103223415.webp",
@@ -999,7 +1021,7 @@
   },
   {
     "id": "spider-man-miles-morales",
-    "title": "Spider Man Miles Morales",
+    "title": "Marvel's Spider-Man: Miles Morales",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/spider-man-miles-morales/spider-man-miles-morales-caratula.webp",
@@ -1076,7 +1098,7 @@
   },
   {
     "id": "the-last-of-us-2",
-    "title": "The Last Of Us 2",
+    "title": "The Last of Us Part II",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/the-last-of-us-2/the-last-of-us-2-02.webp",
@@ -1098,7 +1120,7 @@
   },
   {
     "id": "zelda-breath-of-the-wild",
-    "title": "Zelda Breath Of The Wild",
+    "title": "The Legend of Zelda: Breath of the Wild",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/zelda-breath-of-the-wild/2025072000194400-c.webp",
@@ -1110,7 +1132,7 @@
   },
   {
     "id": "zelda-tears-of-the-kingdom",
-    "title": "Zelda Tears Of The Kingdom",
+    "title": "The Legend of Zelda: Tears of the Kingdom",
     "description": "In-Game Photography",
     "category": "in-game",
     "coverImage": "images/zelda-tears-of-the-kingdom/2026073115221500-c.webp",
