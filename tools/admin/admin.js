@@ -104,6 +104,57 @@ function updateGalleryOrder() {
     });
 }
 
+// Vista dedicada para ordenar galerías, separada en dos columnas por
+// categoría. Cada columna es un Sortable independiente (sin arrastre entre
+// columnas): la categoría se sigue editando desde el selector normal, esto
+// solo resuelve el orden, que es lo que se vuelve inmanejable con las
+// fotografías e in-game mezcladas en una sola lista.
+let orderSortables = [];
+
+function openOrderView() {
+    renderOrderView();
+    document.getElementById('order-dialog').showModal();
+}
+
+function renderOrderView() {
+    const photoList = document.getElementById('order-list-photography');
+    const gameList = document.getElementById('order-list-in-game');
+    photoList.innerHTML = '';
+    gameList.innerHTML = '';
+
+    apiData.galleries.forEach(g => {
+        if (g.id === 'favourites') return;
+        const item = document.createElement('div');
+        item.className = 'order-item';
+        item.dataset.id = g.id;
+        item.innerHTML = `<span class="order-item-handle">⠿</span> ${g.title}`;
+        const target = g.category === 'photography' ? photoList : gameList;
+        target.appendChild(item);
+    });
+
+    orderSortables.forEach(s => s.destroy());
+    orderSortables = [photoList, gameList].map(list => new Sortable(list, {
+        animation: 150,
+        ghostClass: 'ghost',
+        onEnd: applyOrderFromColumns
+    }));
+}
+
+function applyOrderFromColumns() {
+    const photoIds = Array.from(document.getElementById('order-list-photography').children).map(el => el.dataset.id);
+    const gameIds = Array.from(document.getElementById('order-list-in-game').children).map(el => el.dataset.id);
+
+    const favourites = apiData.galleries.filter(g => g.id === 'favourites');
+    const byId = new Map(apiData.galleries.map(g => [g.id, g]));
+    const reordered = [...photoIds, ...gameIds].map(id => byId.get(id)).filter(Boolean);
+
+    apiData.galleries = [...favourites, ...reordered];
+    syncMetaOrder();
+    saveOrder().then(() => {
+        renderSidebar();
+    });
+}
+
 function loadGallery(id) {
     document.querySelectorAll('.btn-gallery').forEach(b => b.classList.remove('active'));
     const activeBtn = document.querySelector(`.btn-gallery[data-id="${id}"]`);

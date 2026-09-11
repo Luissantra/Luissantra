@@ -1,5 +1,17 @@
 [
   {
+    "id": "italy",
+    "category": "photography"
+  },
+  {
+    "id": "japan",
+    "category": "photography"
+  },
+  {
+    "id": "new-york",
+    "category": "photography"
+  },
+  {
     "id": "alan-wake-2",
     "category": "in-game",
     "platform": "ps5"
@@ -50,14 +62,6 @@
     "platform": "ps5"
   },
   {
-    "id": "italy",
-    "category": "photography"
-  },
-  {
-    "id": "japan",
-    "category": "photography"
-  },
-  {
     "id": "mario-kart-world",
     "category": "in-game",
     "platform": "switch-2"
@@ -71,10 +75,6 @@
     "id": "mgs-snake-eater",
     "category": "in-game",
     "platform": "ps5"
-  },
-  {
-    "id": "new-york",
-    "category": "photography"
   },
   {
     "id": "ratchet-clank-rift-apart",
