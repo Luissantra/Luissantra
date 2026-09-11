@@ -2,7 +2,7 @@ const fs = require('fs/promises');
 const path = require('path');
 const sharp = require('sharp');
 const { mergeSizes, SIZES_FILE } = require('./lib/image-sizes');
-const { VARIANT_WIDTHS, variantName, isVariant } = require('./lib/variants');
+const { VARIANT_WIDTHS, variantName, isVariant, dedupeConversionSources } = require('./lib/variants');
 const {
   META_FILE,
   validateMeta,
@@ -130,12 +130,17 @@ async function build() {
       continue;
     }
 
+    const { kept: dedupedFiles, skipped } = dedupeConversionSources(imageFiles);
+    for (const { file, keptAs, target } of skipped) {
+      console.warn(`  Omitiendo ${file}: junto con ${keptAs} generaría el mismo fichero ${target}. Renombra uno de los dos para conservar ambas fotos.`);
+    }
+
     const processedImages = [];
     let coverImage = '';
-    
+
     const limit = limitConcurrency(10); // Process 10 images concurrently
 
-    const tasks = imageFiles.map(file => limit(async () => {
+    const tasks = dedupedFiles.map(file => limit(async () => {
       const filePath = path.join(folderPath, file);
       const fileExt = path.extname(file);
       const baseName = path.basename(file, fileExt);
