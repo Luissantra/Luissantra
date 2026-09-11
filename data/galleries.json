@@ -204,10 +204,10 @@
         "src": "astro-bot/astro-bot-20241002225358.webp"
       },
       {
-        "src": "ciberpunk-2077/cyberpunk-2077-20231116173651.webp"
+        "src": "cyberpunk-2077/cyberpunk-2077-20231116173651.webp"
       },
       {
-        "src": "ciberpunk-2077/cyberpunk-2077-20231116174055.webp"
+        "src": "cyberpunk-2077/cyberpunk-2077-20231116174055.webp"
       },
       {
         "src": "clair-obscur/clair-obscur-expedition-33-20260209223719.webp"
@@ -243,22 +243,22 @@
         "src": "demons-souls/demon-s-souls-20211217155612.webp"
       },
       {
-        "src": "dk-bananza/2025101323323900-c.webp"
+        "src": "donkey-kong-bananza/2025101323323900-c.webp"
       },
       {
-        "src": "dk-bananza/2025092621410800-c.webp"
+        "src": "donkey-kong-bananza/2025092621410800-c.webp"
       },
       {
         "src": "elden-ring/elden-ringa-20220331231903.webp"
       },
       {
-        "src": "gow-ragnarok/god-of-war-ragnara-k-20230712165649.webp"
+        "src": "god-of-war-ragnarok/god-of-war-ragnara-k-20230712165649.webp"
       },
       {
-        "src": "gow-ragnarok/god-of-war-ragnara-k-20230710185209.webp"
+        "src": "god-of-war-ragnarok/god-of-war-ragnara-k-20230710185209.webp"
       },
       {
-        "src": "gow-ragnarok/god-of-war-ragnara-k-20230712161527.webp"
+        "src": "god-of-war-ragnarok/god-of-war-ragnara-k-20230712161527.webp"
       },
       {
         "src": "mario-kart-world/2025081723571800-c.webp"
@@ -279,16 +279,16 @@
         "src": "mario-kart-world/2025082820330200-c.webp"
       },
       {
-        "src": "mario-odyssey/2025120223120900-c.webp"
+        "src": "super-mario-odyssey/2025120223120900-c.webp"
       },
       {
-        "src": "mario-odyssey/2025111501460400-c.webp"
+        "src": "super-mario-odyssey/2025111501460400-c.webp"
       },
       {
-        "src": "mario-odyssey/2025121300052300-c.webp"
+        "src": "super-mario-odyssey/2025121300052300-c.webp"
       },
       {
-        "src": "mario-odyssey/2025121600262200-c.webp"
+        "src": "super-mario-odyssey/2025121600262200-c.webp"
       },
       {
         "src": "marvel-spider-man-2/marvel-s-spider-man-2-20240909164609.webp"
@@ -333,19 +333,19 @@
         "src": "sekiro/sekiroa-shadows-die-twice-20211223170247.webp"
       },
       {
-        "src": "zelda-totk/2026073115221500-c.webp"
+        "src": "zelda-tears-of-the-kingdom/2026073115221500-c.webp"
       },
       {
-        "src": "zelda-totk/2026073015442500-c.webp"
+        "src": "zelda-tears-of-the-kingdom/2026073015442500-c.webp"
       },
       {
-        "src": "zelda-totk/2026073113530400-c.webp"
+        "src": "zelda-tears-of-the-kingdom/2026073113530400-c.webp"
       },
       {
-        "src": "zelda-totk/2026073113540500-c.webp"
+        "src": "zelda-tears-of-the-kingdom/2026073113540500-c.webp"
       },
       {
-        "src": "zelda-totk/2026073113533900-c.webp"
+        "src": "zelda-tears-of-the-kingdom/2026073113533900-c.webp"
       }
     ]
   },
@@ -416,32 +416,6 @@
     "platform": "ps5"
   },
   {
-    "id": "ciberpunk-2077",
-    "title": "Ciberpunk 2077",
-    "description": "In-Game Photography",
-    "category": "in-game",
-    "coverImage": "images/ciberpunk-2077/cyberpunk-2077-20220216180940.webp",
-    "images": [
-      "cyberpunk-2077-20220216180940.webp",
-      "cyberpunk-2077-20220305234248.webp",
-      "cyberpunk-2077-20220305234648.webp",
-      "cyberpunk-2077-20220305235911.webp",
-      "cyberpunk-2077-20231027161131.webp",
-      "cyberpunk-2077-20231028172339.webp",
-      "cyberpunk-2077-20231028174938.webp",
-      "cyberpunk-2077-20231116155623.webp",
-      "cyberpunk-2077-20231116165813.webp",
-      "cyberpunk-2077-20231116171243.webp",
-      "cyberpunk-2077-20231116173057.webp",
-      "cyberpunk-2077-20231116173116.webp",
-      "cyberpunk-2077-20231116173215.webp",
-      "cyberpunk-2077-20231116173631.webp",
-      "cyberpunk-2077-20231116173651.webp",
-      "cyberpunk-2077-20231116174055.webp"
-    ],
-    "platform": "ps5"
-  },
-  {
     "id": "clair-obscur",
     "title": "Clair Obscur",
     "description": "In-Game Photography",
@@ -462,6 +436,32 @@
       "clair-obscur-expedition-33-20260208214011.webp",
       "clair-obscur-expedition-33-20260209223719.webp",
       "clair-obscur-expedition-33-20260209223757.webp"
+    ],
+    "platform": "ps5"
+  },
+  {
+    "id": "cyberpunk-2077",
+    "title": "Cyberpunk 2077",
+    "description": "In-Game Photography",
+    "category": "in-game",
+    "coverImage": "images/cyberpunk-2077/cyberpunk-2077-20220216180940.webp",
+    "images": [
+      "cyberpunk-2077-20220216180940.webp",
+      "cyberpunk-2077-20220305234248.webp",
+      "cyberpunk-2077-20220305234648.webp",
+      "cyberpunk-2077-20220305235911.webp",
+      "cyberpunk-2077-20231027161131.webp",
+      "cyberpunk-2077-20231028172339.webp",
+      "cyberpunk-2077-20231028174938.webp",
+      "cyberpunk-2077-20231116155623.webp",
+      "cyberpunk-2077-20231116165813.webp",
+      "cyberpunk-2077-20231116171243.webp",
+      "cyberpunk-2077-20231116173057.webp",
+      "cyberpunk-2077-20231116173116.webp",
+      "cyberpunk-2077-20231116173215.webp",
+      "cyberpunk-2077-20231116173631.webp",
+      "cyberpunk-2077-20231116173651.webp",
+      "cyberpunk-2077-20231116174055.webp"
     ],
     "platform": "ps5"
   },
@@ -524,11 +524,11 @@
     "platform": "ps5"
   },
   {
-    "id": "dk-bananza",
-    "title": "Dk Bananza",
+    "id": "donkey-kong-bananza",
+    "title": "Donkey Kong Bananza",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/dk-bananza/2025091217102300-c.webp",
+    "coverImage": "images/donkey-kong-bananza/2025091217102300-c.webp",
     "images": [
       "2025091217102300-c.webp",
       "2025091217160500-c.webp",
@@ -631,11 +631,11 @@
     "platform": "ps5"
   },
   {
-    "id": "gow-ragnarok",
-    "title": "Gow Ragnarok",
+    "id": "god-of-war-ragnarok",
+    "title": "God Of War Ragnarok",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/gow-ragnarok/god-of-war-ragnara-k-20230318010932.webp",
+    "coverImage": "images/god-of-war-ragnarok/god-of-war-ragnara-k-20230318010932.webp",
     "images": [
       "god-of-war-ragnara-k-20230318010932.webp",
       "god-of-war-ragnara-k-20230709121220.webp",
@@ -820,24 +820,6 @@
       "2025082820330200-c.webp",
       "2025082820401800-c.webp",
       "2025083015473100-c.webp"
-    ],
-    "platform": "switch-2"
-  },
-  {
-    "id": "mario-odyssey",
-    "title": "Mario Odyssey",
-    "description": "In-Game Photography",
-    "category": "in-game",
-    "coverImage": "images/mario-odyssey/2025110821564800-c.webp",
-    "images": [
-      "2025110821564800-c.webp",
-      "2025111501460400-c.webp",
-      "2025120223120900-c.webp",
-      "2025121300052300-c.webp",
-      "2025121318441800-c.webp",
-      "2025121600142900-c.webp",
-      "2025121600223100-c.webp",
-      "2025121600262200-c.webp"
     ],
     "platform": "switch-2"
   },
@@ -1058,6 +1040,24 @@
     "platform": "ps5"
   },
   {
+    "id": "super-mario-odyssey",
+    "title": "Super Mario Odyssey",
+    "description": "In-Game Photography",
+    "category": "in-game",
+    "coverImage": "images/super-mario-odyssey/2025110821564800-c.webp",
+    "images": [
+      "2025110821564800-c.webp",
+      "2025111501460400-c.webp",
+      "2025120223120900-c.webp",
+      "2025121300052300-c.webp",
+      "2025121318441800-c.webp",
+      "2025121600142900-c.webp",
+      "2025121600223100-c.webp",
+      "2025121600262200-c.webp"
+    ],
+    "platform": "switch-2"
+  },
+  {
     "id": "the-last-guardian",
     "title": "The Last Guardian",
     "description": "In-Game Photography",
@@ -1098,11 +1098,11 @@
     "platform": "ps4"
   },
   {
-    "id": "zelda-botw",
-    "title": "Zelda Botw",
+    "id": "zelda-breath-of-the-wild",
+    "title": "Zelda Breath Of The Wild",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/zelda-botw/2025072000194400-c.webp",
+    "coverImage": "images/zelda-breath-of-the-wild/2025072000194400-c.webp",
     "images": [
       "2025072000194400-c.webp",
       "2025072000214000-c.webp"
@@ -1110,11 +1110,11 @@
     "platform": "switch-2"
   },
   {
-    "id": "zelda-totk",
-    "title": "Zelda Totk",
+    "id": "zelda-tears-of-the-kingdom",
+    "title": "Zelda Tears Of The Kingdom",
     "description": "In-Game Photography",
     "category": "in-game",
-    "coverImage": "images/zelda-totk/2026072918195200-c.webp",
+    "coverImage": "images/zelda-tears-of-the-kingdom/2026072918195200-c.webp",
     "images": [
       "2026072918195200-c.webp",
       "2026073015421900-c.webp",
